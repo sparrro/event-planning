@@ -8,3 +8,7 @@ export const PORT = process.env.port;
 export const BASE_URL = process.env.BASE_URL;
 
 export const SALTROUNDS = Number(process.env.SALTROUNDS);
+
+export const MAILJET_API_KEY = process.env.MAILJET_API_KEY;
+
+export const MAILJET_SECRET_KEY = process.env.MAILJET_SECRET_KEY;
