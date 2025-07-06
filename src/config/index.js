@@ -6,3 +6,5 @@ export const DB_URI = process.env.mongodb_URI;
 export const PORT = process.env.port;
 
 export const BASE_URL = process.env.BASE_URL;
+
+export const SALTROUNDS = Number(process.env.SALTROUNDS);

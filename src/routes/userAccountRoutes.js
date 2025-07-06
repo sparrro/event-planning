@@ -1,15 +1,15 @@
 import express from "express";
-import userAccountController from "../modules/userAccount/controller.js";
+import userAccountController from "../modules/userAccount/controllers/controller.js";
 
 const userRoutes = express.Router();
 
 userRoutes.post(
-    "/signUp",
+    "/signup",
     userAccountController.signUp
 );
 
 userRoutes.post(
-    "/logIn",
+    "/login",
     userAccountController.logIn
 );
 
