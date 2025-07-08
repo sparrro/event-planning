@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import {
     DB_URI,
     PORT,
-} from "./config/index.js";
+} from "./config/environment.js";
 import userRoutes from "./routes/userAccountRoutes.js";
 
 const app = express();

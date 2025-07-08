@@ -13,9 +13,9 @@ userRoutes.post(
     userAccountController.logIn
 );
 
-userRoutes.post(
-    "/verify",
+userRoutes.get(
+    "/verify/:token",
     userAccountController.verify
-)
+);
 
 export default userRoutes;

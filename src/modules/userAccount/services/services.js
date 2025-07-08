@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import userAccountRepo from "../repositories/userAccountRepo.js";
-import { SALTROUNDS } from "../../../config/index.js";
+import { SALTROUNDS } from "../../../config/environment.js";
 import crypto from "crypto";
 import verificationTokenRepo from "../repositories/verificationTokenRepo.js";
+import { sendVerificationMail } from "../../../utils/mailjet.js";
 
 const userAccountService = {
     logIn: async (credentials) => {
@@ -23,14 +24,18 @@ const userAccountService = {
             };
             await verificationTokenRepo.saveToken(verificationToken);
             //skicka mejl med länk till verifieringsändpunkten med tokenet i
-
+            const emailResult = await sendVerificationMail(userData.email, userData.username, verificationToken.token);
             //svara 200, det skapade kontot och tokenet i databasen
-            return {success: true, message: "account created", data: result}
+            if (emailResult.success) {
+                return {success: true, message: "account created", data: result}
+            } else return {success: false, message: "Error sending verification email", error: emailResult.error}
         } catch (error) {
             return {success: false, message: error.message}
         }
     },
     verify: async (token) => {
+
+        return {success: true, message: "just for testing", data: {token: token}}
         //hitta tokenet i databasen
 
         //dekryptera det och kolla att det inte gått ut

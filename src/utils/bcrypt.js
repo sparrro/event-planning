@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { SALTROUNDS } from "../config";
+import { SALTROUNDS } from "../config/environment";
 
 
 export const hashPassword = async (password) => {
