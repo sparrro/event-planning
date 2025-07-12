@@ -7,6 +7,11 @@ import { sendVerificationMail } from "../../../utils/mailjet.js";
 
 const userAccountService = {
     logIn: async (credentials) => {
+        try {
+
+        } catch (error) {
+            return {success: false, message: error.message}
+        }
 
     },
     signUp: async (userData) => {
@@ -27,7 +32,7 @@ const userAccountService = {
             const emailResult = await sendVerificationMail(userData.email, userData.username, verificationToken.token);
             //svara 200, det skapade kontot och tokenet i databasen
             if (emailResult.success) {
-                return {success: true, message: "account created", data: result}
+                return {success: true, message: "Account created", data: result}
             } else return {success: false, message: "Error sending verification email", error: emailResult.error}
         } catch (error) {
             return {success: false, message: error.message}
@@ -35,16 +40,20 @@ const userAccountService = {
     },
     verify: async (token) => {
 
-        return {success: true, message: "just for testing", data: {token: token}}
-        //hitta tokenet i databasen
-
-        //dekryptera det och kolla att det inte gått ut
-
-        //hitta motsvarande kontot
-
-        //markera kontot som verifierat
-
-        //skicka svar 200
+        try {
+            //hitta tokenet i databasen
+            const tokenResult = await verificationTokenRepo.findToken(token);
+            if (tokenResult.length === 0) return {success: false, message: "No token found"}
+            //dekryptera det och kolla att det inte gått ut - det är inte krypterat!!!!!!!
+            const now = Date.now();
+            if (now > tokenResult[0].expiresAt) return {success: false, message: "Token expired"} //TODO: skicka ett nytt mejl
+            //hitta motsvarande kontot och markera det som verifierat
+            const accountResult = await userAccountRepo.verifyUser(tokenResult[0].userId);
+            //skicka svar 200
+            return {success: true, message: "Account verified", data: accountResult}
+        } catch (error) {
+            return {success: false, message: error.message}
+        }
     }
 }
 

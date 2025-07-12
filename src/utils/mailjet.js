@@ -26,7 +26,7 @@ export const sendVerificationMail = async (userEmail, username, token) => {
                     ],
                     Subject: "Account verification",
                     TextPart: "",
-                    HTMLPart: renderEmail("verify", { url: `http://127.0.0.1:3000/user/verify/${token}` }), //kom ihåg att byta till basurlen
+                    HTMLPart: renderEmail("verify", { url: `http://127.0.0.1:3000/user/verify?token=${token}` }), //kom ihåg att byta till basurlen
                 }
             ]
         });

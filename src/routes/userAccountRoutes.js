@@ -14,7 +14,7 @@ userRoutes.post(
 );
 
 userRoutes.get(
-    "/verify/:token",
+    "/verify",
     userAccountController.verify
 );
 

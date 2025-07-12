@@ -6,7 +6,7 @@
                 <mj-text>This email was sent to you because an account was registered at my website using this email address.</mj-text>
                 <mj-text>If this was not done by you, please ignore this email.</mj-text>
                 <mj-text>If it was, verify your account by clicking the following link:</mj-text>
-                <mj-button href={{url}}>Verify!</mj-button>
+                <mj-button href={{{url}}}>Verify!</mj-button>
             </mj-column>
         </mj-section>
     </mj-body>

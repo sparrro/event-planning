@@ -47,7 +47,7 @@ const userAccountController = {
 
     verify: async (req, res) => {
 
-        const token = req.params.token;
+        const token = req.query.token;
 
         try {
             const result = await userAccountService.verify(token);
