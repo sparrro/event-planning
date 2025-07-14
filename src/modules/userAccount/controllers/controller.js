@@ -10,6 +10,7 @@ const userAccountController = {
             username: Joi.string(),
             email: Joi.string(),
             password: Joi.string().required(),
+            keepMeLoggedIn: Joi.boolean().required(),
         }).or("username", "email");
         const { error } = credentialSchema.validate(credentials);
         if (error) return res.status(400).json({success: false, message: "Missing login credentials"});

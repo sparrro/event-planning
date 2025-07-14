@@ -4,11 +4,38 @@ import { SALTROUNDS } from "../../../config/environment.js";
 import crypto from "crypto";
 import verificationTokenRepo from "../repositories/verificationTokenRepo.js";
 import { sendVerificationMail } from "../../../utils/mailjet.js";
+import { giveAccessToken, giveRefreshToken } from "../../../utils/jwt.js";
 
 const userAccountService = {
     logIn: async (credentials) => {
         try {
+            //hämta användarnamn, mejl och lösenord
+            const { username, email, password, keepMeLoggedIn } = credentials;
 
+            //hämta kontot efter namn eller mejl
+            let account;
+            if (username) {
+                account = await userAccountRepo.findUserByName(username);
+            } else account = await userAccountRepo.findUserByEmail(email);
+            if (!account) return {success: false, message: "No account found"}
+
+            //jämför lösenordet mot kontot
+            const correctPassword = await bcrypt.compare(password, account.hashedPassword);
+            if (!correctPassword) return {success: false, message: "Incorrect password"}
+
+            //generera token med användarens id och skicka i svar
+            const payload = {
+                id: account._id,
+                username: account.username,
+            }
+            const accessToken = giveAccessToken(payload);
+            const refreshToken = giveRefreshToken(payload);
+            if (keepMeLoggedIn) {
+                account.refreshToken = refreshToken;
+                await account.save();
+            }
+            return {success: true, message: "Logged in successfully", data: {accessToken, refreshToken}}
+            
         } catch (error) {
             return {success: false, message: error.message}
         }
@@ -17,10 +44,17 @@ const userAccountService = {
     signUp: async (userData) => {
         try {
             //hasha lösenordet och lägg till datum
-            userData.hashedPassword = await bcrypt.hash(userData.password, SALTROUNDS);
-            userData.registeredAt = Date.now();
+            const { username, email, password } = userData;
+            const hashedPassword = await bcrypt.hash(password, SALTROUNDS);
+            const registeredAt = Date.now();
+            const accountData = {
+                username: username,
+                email: email,
+                hashedPassword: hashedPassword,
+                registeredAt: registeredAt
+            }
             //spara kontot till databasen
-            const result = await userAccountRepo.registerUser(userData);
+            const result = await userAccountRepo.registerUser(accountData);
             //generera verifieringstoken och spara det till databasen
             const verificationToken = {
                 token: crypto.randomBytes(32).toString("hex"),
@@ -43,17 +77,20 @@ const userAccountService = {
         try {
             //hitta tokenet i databasen
             const tokenResult = await verificationTokenRepo.findToken(token);
-            if (tokenResult.length === 0) return {success: false, message: "No token found"}
+            if (!tokenResult) return {success: false, message: "No token found"}
             //dekryptera det och kolla att det inte gått ut - det är inte krypterat!!!!!!!
             const now = Date.now();
-            if (now > tokenResult[0].expiresAt) return {success: false, message: "Token expired"} //TODO: skicka ett nytt mejl
+            if (now > tokenResult.expiresAt) return {success: false, message: "Token expired"} //TODO: skicka ett nytt mejl
             //hitta motsvarande kontot och markera det som verifierat
-            const accountResult = await userAccountRepo.verifyUser(tokenResult[0].userId);
+            const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
             //skicka svar 200
             return {success: true, message: "Account verified", data: accountResult}
         } catch (error) {
             return {success: false, message: error.message}
         }
+    },
+    refresh: async () => {
+
     }
 }
 

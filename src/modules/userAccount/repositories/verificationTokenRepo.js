@@ -5,7 +5,7 @@ const verificationTokenRepo = {
         return await VerificationToken.create(tokenData);
     },
     findToken: async (token) => {
-        return await VerificationToken.find({ token: token });
+        return await VerificationToken.findOne({ token: token });
     }
 }
 
