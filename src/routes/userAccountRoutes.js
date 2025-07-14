@@ -18,4 +18,9 @@ userRoutes.get(
     userAccountController.verify
 );
 
+userRoutes.post(
+    "/refresh",
+    userAccountController.refresh
+)
+
 export default userRoutes;

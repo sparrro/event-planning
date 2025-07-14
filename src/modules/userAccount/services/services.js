@@ -4,7 +4,7 @@ import { SALTROUNDS } from "../../../config/environment.js";
 import crypto from "crypto";
 import verificationTokenRepo from "../repositories/verificationTokenRepo.js";
 import { sendVerificationMail } from "../../../utils/mailjet.js";
-import { giveAccessToken, giveRefreshToken } from "../../../utils/jwt.js";
+import { giveAccessToken, giveRefreshToken, verifyRefreshToken } from "../../../utils/jwt.js";
 
 const userAccountService = {
     logIn: async (credentials) => {
@@ -89,8 +89,19 @@ const userAccountService = {
             return {success: false, message: error.message}
         }
     },
-    refresh: async () => {
+    refresh: async (token) => {
+        try {
 
+            const decoded = verifyRefreshToken(token);
+            const account = await userAccountRepo.findUserById(decoded.id);
+            console.log({token: decoded, account: account})
+            if (!decoded || !account || account.refreshToken !== token) return {success:false, message: "Invalid token"};
+            const newAccessToken = giveAccessToken({id: account._id, username: account.username});
+            return {success: true, message: "Token refreshed", data: {accessToken: newAccessToken}}
+
+        } catch (error) {
+            return {success: false, message: error.message}
+        }
     }
 }
 
