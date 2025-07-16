@@ -1,5 +1,6 @@
 import express from "express";
 import userAccountController from "../modules/userAccount/controllers/controller.js";
+import { authenticate } from "../middlewares/authentication.js";
 
 const userRoutes = express.Router();
 
@@ -13,14 +14,28 @@ userRoutes.post(
     userAccountController.logIn
 );
 
+userRoutes.post(
+    "/logout",
+    authenticate, //bör alltid föregås av tokenExpired
+    userAccountController.logout
+)
+
 userRoutes.get(
     "/verify",
     userAccountController.verify
 );
 
 userRoutes.post(
-    "/refresh",
+    "/refresh/:refreshToken",
     userAccountController.refresh
+)
+
+userRoutes.post(
+    "/test",
+    authenticate,
+    (req, res) => {
+        return res.status(200).json({success: true, message: "Test successful"});
+    }
 )
 
 export default userRoutes;

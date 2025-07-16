@@ -13,7 +13,7 @@ const userAccountController = {
             keepMeLoggedIn: Joi.boolean().required(),
         }).or("username", "email");
         const { error } = credentialSchema.validate(credentials);
-        if (error) return res.status(400).json({success: false, message: "Missing login credentials"});
+        if (error) return res.status(400).json({success: false, message: error.message});
 
         try {
             const result = await userAccountService.logIn(credentials);
@@ -23,6 +23,10 @@ const userAccountController = {
         } catch (error) {
             return res.status(500).json({success: false, message: "Server error"});
         }
+    },
+
+    logout: async (req, res) => {
+        //TODO: skriv den här funktionen
     },
 
     signUp: async (req, res) => {
@@ -62,7 +66,7 @@ const userAccountController = {
 
     refresh: async (req, res) => {
 
-        const { refreshToken } = req.body;
+        const { refreshToken } = req.params;
 
         try {
             const result = await userAccountService.refresh(refreshToken);

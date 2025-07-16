@@ -66,7 +66,7 @@ const userAccountService = {
             const emailResult = await sendVerificationMail(userData.email, userData.username, verificationToken.token);
             //svara 200, det skapade kontot och tokenet i databasen
             if (emailResult.success) {
-                return {success: true, message: "Account created", data: result}
+                return {success: true, message: "Account created", data: {account: result}}
             } else return {success: false, message: "Error sending verification email", error: emailResult.error}
         } catch (error) {
             return {success: false, message: error.message}
@@ -84,7 +84,7 @@ const userAccountService = {
             //hitta motsvarande kontot och markera det som verifierat
             const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
             //skicka svar 200
-            return {success: true, message: "Account verified", data: accountResult}
+            return {success: true, message: "Account verified", data: {account: result}}
         } catch (error) {
             return {success: false, message: error.message}
         }
@@ -94,7 +94,6 @@ const userAccountService = {
 
             const decoded = verifyRefreshToken(token);
             const account = await userAccountRepo.findUserById(decoded.id);
-            console.log({token: decoded, account: account})
             if (!decoded || !account || account.refreshToken !== token) return {success:false, message: "Invalid token"};
             const newAccessToken = giveAccessToken({id: account._id, username: account.username});
             return {success: true, message: "Token refreshed", data: {accessToken: newAccessToken}}
