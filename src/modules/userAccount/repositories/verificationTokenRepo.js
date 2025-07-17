@@ -6,7 +6,10 @@ const verificationTokenRepo = {
     },
     findToken: async (token) => {
         return await VerificationToken.findOne({ token: token });
-    }
+    },
+    deleteToken: async (token) => {
+        return await VerificationToken.deleteOne({ token: token })
+    },
 }
 
 export default verificationTokenRepo;

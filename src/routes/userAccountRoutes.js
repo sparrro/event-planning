@@ -16,7 +16,7 @@ userRoutes.post(
 
 userRoutes.post(
     "/logout",
-    authenticate, //bör alltid föregås av tokenExpired
+    authenticate,
     userAccountController.logout
 )
 

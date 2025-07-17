@@ -80,7 +80,18 @@ const userAccountService = {
             if (!tokenResult) return {success: false, message: "No token found"}
             //dekryptera det och kolla att det inte gått ut - det är inte krypterat!!!!!!!
             const now = Date.now();
-            if (now > tokenResult.expiresAt) return {success: false, message: "Token expired"} //TODO: skicka ett nytt mejl
+            if (now > tokenResult.expiresAt) { //skicka ett nytt mejl om tokenet gått ut när man klickar på länken
+                const newToken = {
+                    token: crypto.randomBytes(32).toString("hex"),
+                    expiresAt: Date.now() + 1000 * 60 * 60 * 24,
+                    userId: tokenResult.userId
+                };
+                await verificationTokenRepo.saveToken(newToken);
+                await verificationTokenRepo.deleteToken(tokenResult.token);
+                const accountResult = await userAccountRepo.findUserById(newToken.userId);
+                await sendVerificationMail(accountResult.email, accountResult.username, newToken.token);
+                return {success: true, message: "Token expired. A new verification email has been sent."}
+            }
             //hitta motsvarande kontot och markera det som verifierat
             const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
             //skicka svar 200
