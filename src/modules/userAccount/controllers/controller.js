@@ -26,7 +26,16 @@ const userAccountController = {
     },
 
     logout: async (req, res) => {
-        //TODO: skriv den här funktionen
+        const { id } = req.body;
+        if (!id) return res.status(400).json({success:false, message: "No id provided"});
+        try {
+            const result = await userAccountService.logOut(id);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json({success: false, message: "Failed to delete refresh token"});
+        } catch (error) {
+            return res.status(500).json({success: false, message: "Server error"});
+        }
     },
 
     signUp: async (req, res) => {

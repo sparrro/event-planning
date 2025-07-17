@@ -41,6 +41,16 @@ const userAccountService = {
         }
 
     },
+    logOut: async (id) => {
+        try {
+            const account = await userAccountRepo.findUserById(id);
+            delete account.refreshToken;
+            account.save();
+            return {success: true, message: "Logged out succesfully"}
+        } catch (error) {
+            return {success: false, message: error.message}
+        }
+    },
     signUp: async (userData) => {
         try {
             //hasha lösenordet och lägg till datum
