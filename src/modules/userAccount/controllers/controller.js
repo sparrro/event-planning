@@ -50,7 +50,7 @@ const userAccountController = {
         if (error) return res.status(400).json({success: false, message: "Invalid user data provided"});
 
         try {
-            const result = await userAccountService.signUp(data); //returnera {success: boolean, message: string, data: objekt eller array}
+            const result = await userAccountService.signUp(data);
             if (result.success) {
                 return res.status(201).json(result);
             } else return res.status(400).json(result);

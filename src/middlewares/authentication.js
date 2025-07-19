@@ -7,7 +7,7 @@ export const authenticate = (req, res, next) => {
     if (!token) return res.status(401).json({success: false, message: "No valid token provided"});
     jsonwebtoken.verify(token, JWT_ACCESS_SECRET, (error, user) => {
         if (error) return res.status(401).json({success: false, message: "Failed to authenticate token"});
-        const now = Date.now();
+        const now = Math.floor(Date.now() / 1000);
         if (now > user.exp) return res.status(401).json({success: false, message: "Access token expired"});
         req.body.user = user;
         next();

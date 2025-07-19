@@ -9,21 +9,16 @@ import { giveAccessToken, giveRefreshToken, verifyRefreshToken } from "../../../
 const userAccountService = {
     logIn: async (credentials) => {
         try {
-            //hämta användarnamn, mejl och lösenord
             const { username, email, password, keepMeLoggedIn } = credentials;
-
-            //hämta kontot efter namn eller mejl
             let account;
             if (username) {
                 account = await userAccountRepo.findUserByName(username);
             } else account = await userAccountRepo.findUserByEmail(email);
             if (!account) return {success: false, message: "No account found"}
 
-            //jämför lösenordet mot kontot
             const correctPassword = await bcrypt.compare(password, account.hashedPassword);
             if (!correctPassword) return {success: false, message: "Incorrect password"}
 
-            //generera token med användarens id och skicka i svar
             const payload = {
                 id: account._id,
                 username: account.username,
@@ -44,8 +39,8 @@ const userAccountService = {
     logOut: async (id) => {
         try {
             const account = await userAccountRepo.findUserById(id);
-            delete account.refreshToken;
-            account.save();
+            account.refreshToken = undefined;
+            await account.save();
             return {success: true, message: "Logged out succesfully"}
         } catch (error) {
             return {success: false, message: error.message}
@@ -53,7 +48,6 @@ const userAccountService = {
     },
     signUp: async (userData) => {
         try {
-            //hasha lösenordet och lägg till datum
             const { username, email, password } = userData;
             const hashedPassword = await bcrypt.hash(password, SALTROUNDS);
             const registeredAt = Date.now();
@@ -63,18 +57,14 @@ const userAccountService = {
                 hashedPassword: hashedPassword,
                 registeredAt: registeredAt
             }
-            //spara kontot till databasen
             const result = await userAccountRepo.registerUser(accountData);
-            //generera verifieringstoken och spara det till databasen
             const verificationToken = {
                 token: crypto.randomBytes(32).toString("hex"),
                 expiresAt: Date.now() + 1000 * 60 * 60 * 24,
                 userId: result._id
             };
             await verificationTokenRepo.saveToken(verificationToken);
-            //skicka mejl med länk till verifieringsändpunkten med tokenet i
             const emailResult = await sendVerificationMail(userData.email, userData.username, verificationToken.token);
-            //svara 200, det skapade kontot och tokenet i databasen
             if (emailResult.success) {
                 return {success: true, message: "Account created", data: {account: result}}
             } else return {success: false, message: "Error sending verification email", error: emailResult.error}
@@ -85,12 +75,10 @@ const userAccountService = {
     verify: async (token) => {
 
         try {
-            //hitta tokenet i databasen
             const tokenResult = await verificationTokenRepo.findToken(token);
             if (!tokenResult) return {success: false, message: "No token found"}
-            //dekryptera det och kolla att det inte gått ut - det är inte krypterat!!!!!!!
             const now = Date.now();
-            if (now > tokenResult.expiresAt) { //skicka ett nytt mejl om tokenet gått ut när man klickar på länken
+            if (now > tokenResult.expiresAt) {
                 const newToken = {
                     token: crypto.randomBytes(32).toString("hex"),
                     expiresAt: Date.now() + 1000 * 60 * 60 * 24,
@@ -102,10 +90,8 @@ const userAccountService = {
                 await sendVerificationMail(accountResult.email, accountResult.username, newToken.token);
                 return {success: true, message: "Token expired. A new verification email has been sent."}
             }
-            //hitta motsvarande kontot och markera det som verifierat
             const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
-            //skicka svar 200
-            return {success: true, message: "Account verified", data: {account: result}}
+            return {success: true, message: "Account verified", data: {account: accountResult}}
         } catch (error) {
             return {success: false, message: error.message}
         }
