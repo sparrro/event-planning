@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_URI } from "./config/index.js";
+import { DB_URI } from "./config/environment";
 
 const db = async () => {
     if (!DB_URI) return;

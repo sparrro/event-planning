@@ -1,9 +1,13 @@
 import Joi from "joi";
-import userAccountService from "../services/services.js";
+import userAccountService from "../services/services";
+import {
+    Request,
+    Response
+} from "express";
 
 const userAccountController = {
 
-    logIn: async (req, res) => {
+    logIn: async (req: Request, res: Response) => {
 
         const credentials = req.body;
         const credentialSchema = Joi.object({
@@ -13,7 +17,7 @@ const userAccountController = {
             keepMeLoggedIn: Joi.boolean().required(),
         }).or("username", "email");
         const { error } = credentialSchema.validate(credentials);
-        if (error) return res.status(400).json({success: false, message: error.message});
+        if (error) return res.status(400).json({ success: false, message: error.message });
 
         try {
             const result = await userAccountService.logIn(credentials);
@@ -21,24 +25,24 @@ const userAccountController = {
                 return res.status(200).json(result);
             } else return res.status(400).json(result);
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"});
+            return res.status(500).json({ success: false, message: "Server error" });
         }
     },
 
-    logout: async (req, res) => {
+    logout: async (req: Request, res: Response) => {
         const { id } = req.body;
         if (!id) return res.status(400).json({success:false, message: "No id provided"});
         try {
             const result = await userAccountService.logOut(id);
             if (result.success) {
                 return res.status(200).json(result);
-            } else return res.status(400).json({success: false, message: "Failed to delete refresh token"});
+            } else return res.status(400).json({ success: false, message: "Failed to delete refresh token" });
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"});
+            return res.status(500).json({ success: false, message: "Server error" });
         }
     },
 
-    signUp: async (req, res) => {
+    signUp: async (req: Request, res: Response) => {
 
         const data = req.body;
         const userSchema = Joi.object({
@@ -47,7 +51,7 @@ const userAccountController = {
             email: Joi.string().required(),
         });
         const { error } = userSchema.validate(data);
-        if (error) return res.status(400).json({success: false, message: "Invalid user data provided"});
+        if (error) return res.status(400).json({ success: false, message: "Invalid user data provided" });
 
         try {
             const result = await userAccountService.signUp(data);
@@ -55,25 +59,26 @@ const userAccountController = {
                 return res.status(201).json(result);
             } else return res.status(400).json(result);
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"});
+            return res.status(500).json({ success: false, message: "Server error" });
         }
     },
 
-    verify: async (req, res) => {
+    verify: async (req: Request, res: Response) => {
 
-        const token = req.query.token;
+        const { token } = req.query;
+        if (!token) return res.status(400).json({ success: false, message: "No token provided" });
 
         try {
-            const result = await userAccountService.verify(token);
+            const result = await userAccountService.verify(token as string);
             if (result.success) {
                 return res.status(200).json(result);
             } else return res.status(404).json(result);
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"});
+            return res.status(500).json({ success: false, message: "Server error" });
         }
     },
 
-    refresh: async (req, res) => {
+    refresh: async (req: Request, res: Response) => {
 
         const { refreshToken } = req.params;
 
@@ -83,7 +88,7 @@ const userAccountController = {
                 return res.status(200).json(result);
             } else return res.status(400).json(result);
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"});
+            return res.status(500).json({ success: false, message: "Server error" });
         }
     }
 

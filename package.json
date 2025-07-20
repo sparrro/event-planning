@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -12,5 +11,18 @@
     "mongoose": "^8.16.1",
     "node-mailjet": "^6.0.8",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mjml": "^4.7.4",
+    "@types/node-mailjet": "^3.3.12",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }
