@@ -66,6 +66,10 @@ const userAccountService = {
     signUp: async (userData: signupData) => {
         try {
             const { username, email, password } = userData;
+            const userNameTaken = await userAccountRepo.findUserByName(username);
+            const emailInUse = await userAccountRepo.findUserByEmail(email);
+            if (userNameTaken || emailInUse) return { success: false, message: "Email or username already taken" }
+
             const hashedPassword = await bcrypt.hash(password, SALTROUNDS);
             const registeredAt = Date.now();
             const accountData = {

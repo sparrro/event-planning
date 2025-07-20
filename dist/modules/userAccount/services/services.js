@@ -69,6 +69,10 @@ const userAccountService = {
     signUp: async (userData) => {
         try {
             const { username, email, password } = userData;
+            const userNameTaken = await userAccountRepo_1.default.findUserByName(username);
+            const emailInUse = await userAccountRepo_1.default.findUserByEmail(email);
+            if (userNameTaken || emailInUse)
+                return { success: false, message: "Email or username already taken" };
             const hashedPassword = await bcrypt_1.default.hash(password, environment_1.SALTROUNDS);
             const registeredAt = Date.now();
             const accountData = {
@@ -80,7 +84,7 @@ const userAccountService = {
             const result = await userAccountRepo_1.default.registerUser(accountData);
             const verificationToken = {
                 token: crypto_1.default.randomBytes(32).toString("hex"),
-                expiresAt: Date.now() /*  + 1000 * 60 * 60 * 24 */,
+                expiresAt: Date.now() + 1000 * 60 * 60 * 24,
                 userId: result._id
             };
             await verificationTokenRepo_1.default.saveToken(verificationToken);

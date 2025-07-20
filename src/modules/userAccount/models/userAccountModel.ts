@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const userAccountSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     hashedPassword: {
         type: String,
@@ -12,18 +13,19 @@ const userAccountSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     verified: {
         type: Boolean,
-        default: false
+        default: false,
     },
     registeredAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     refreshToken: {
         type: String,
-    }
+    },
 });
 
 export default mongoose.model("UserAccount", userAccountSchema);
