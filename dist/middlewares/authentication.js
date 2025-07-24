@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticate = void 0;
+exports.checkVerified = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const environment_1 = require("../config/environment");
+const userAccountRepo_1 = __importDefault(require("../modules/userAccount/repositories/userAccountRepo"));
 const authenticate = (req, res, next) => {
     const authorization = req.headers["authorization"];
     const token = authorization && authorization.split(" ")[1];
@@ -24,3 +25,11 @@ const authenticate = (req, res, next) => {
     });
 };
 exports.authenticate = authenticate;
+const checkVerified = async (req, res, next) => {
+    const { user } = req.body;
+    const account = await userAccountRepo_1.default.findUserById(user.id);
+    if (!account?.verified)
+        return res.status(401).json({ success: false, message: "User not verified" });
+    next();
+};
+exports.checkVerified = checkVerified;

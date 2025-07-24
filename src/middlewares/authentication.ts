@@ -6,6 +6,7 @@ import {
     Response
 } from "express";
 import jwtPayload from "../types/jwtPayload";
+import userAccountRepo from "../modules/userAccount/repositories/userAccountRepo";
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
@@ -22,4 +23,18 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
         next();
     });
 
-}
+};
+
+export const checkVerified = async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req.body;
+    const account = await userAccountRepo.findUserById(user.id);
+    if (!account?.verified) return res.status(401).json({ success: false, message: "User not verified" });
+    next();
+};
+
+export const checkSameUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { authenticatedUserId } = req.body.user.id;
+    const { userId } = req.params;
+    if (authenticatedUserId != userId) return res.status(403).json({ success: false, message: "Can only access own account" });
+    next();
+};

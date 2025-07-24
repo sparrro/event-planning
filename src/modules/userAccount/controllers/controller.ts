@@ -4,6 +4,7 @@ import {
     Request,
     Response
 } from "express";
+import mongoose from "mongoose";
 
 const userAccountController = {
 
@@ -90,6 +91,21 @@ const userAccountController = {
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }
+    },
+
+    delete: async (req: Request, res: Response) => {
+
+        const id = req.params.userId as unknown as mongoose.Types.ObjectId;
+
+        try {
+            const result = await userAccountService.delete(id);
+            if (result.success) {
+                return res.status(200).json(result);
+            }
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        };
+
     }
 
 }

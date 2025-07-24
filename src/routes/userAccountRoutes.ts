@@ -1,6 +1,6 @@
 import express from "express";
 import userAccountController from "../modules/userAccount/controllers/controller";
-import { authenticate } from "../middlewares/authentication";
+import { authenticate, checkSameUser, checkVerified } from "../middlewares/authentication";
 
 const userRoutes = express.Router();
 
@@ -28,11 +28,19 @@ userRoutes.get(
 userRoutes.post(
     "/refresh/:refreshToken",
     userAccountController.refresh
+);
+
+userRoutes.delete(
+    "/delete/:userId",
+    authenticate,
+    checkSameUser,
+    userAccountController.delete
 )
 
 userRoutes.post(
     "/test",
     authenticate,
+    checkVerified,
     (req, res) => {
         return res.status(200).json({success: true, message: "Test successful"});
     }

@@ -18,6 +18,9 @@ const userAccountRepo = {
     verifyUser: async (id: mongoose.Types.ObjectId) => {
         return await UserAccount.findByIdAndUpdate(id, { verified: true }, { new: true });
     },
+    deleteUser: async (id: mongoose.Types.ObjectId) => {
+        return await UserAccount.findOneAndDelete({ _id: id });
+    }
 }
 
 export default userAccountRepo;

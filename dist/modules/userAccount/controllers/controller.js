@@ -96,6 +96,19 @@ const userAccountController = {
         catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }
+    },
+    delete: async (req, res) => {
+        const id = req.params.id;
+        try {
+            const result = await services_1.default.delete(id);
+            if (result.success) {
+                return res.status(200).json(result);
+            }
+        }
+        catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+        ;
     }
 };
 exports.default = userAccountController;

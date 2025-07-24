@@ -99,29 +99,31 @@ const userAccountService = {
 
         try {
             const tokenResult = await verificationTokenRepo.findToken(token);
-            if (!tokenResult) return {success: false, message: "No token found"}
+            if (!tokenResult) return {success: false, message: "No token found"};
             const now = Date.now();
             if (now > Number(tokenResult.expiresAt)) {
                 const newToken = {
                     token: crypto.randomBytes(32).toString("hex"),
                     expiresAt: Date.now() + 1000 * 60 * 60 * 24,
-                    userId: tokenResult.userId
+                    userId: tokenResult.userId,
                 };
                 await verificationTokenRepo.saveToken(newToken);
                 await verificationTokenRepo.deleteToken(tokenResult.token);
                 const accountResult = await userAccountRepo.findUserById(newToken.userId);
                 if (accountResult) {
                     await sendVerificationMail(accountResult.email, accountResult.username, newToken.token);
-                    return { success: true, message: "Token expired, a new verification email has been sent" }
-                } else return { success: false, message: "Refresh token expired but failed to send new email" }
+                    return { success: true, message: "Token expired, a new verification email has been sent" };
+                } else return { success: false, message: "Refresh token expired but failed to send new email" };
             }
             const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
-            return { success: true, message: "Account verified", data: { account: accountResult } }
+            if (!accountResult) return { success: false, message: "Failed to verify account" };
+            await verificationTokenRepo.deleteToken(token);
+            return { success: true, message: "Account verified", data: { account: accountResult } };
         } catch (error) {
             if (error instanceof Error) {
-                return { success: false, message: error.message }
-            } else return { success: false, message: "Unknown error" }
-        }
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
     },
     refresh: async (token: string) => {
         try {
@@ -140,7 +142,22 @@ const userAccountService = {
                 return { success: false, message: error.message }
             } else return { success: false, message: "Unknown error" }
         }
-    }
+    },
+    delete: async (id: mongoose.Types.ObjectId) => {
+
+        try {
+            const deletionResult = await userAccountRepo.deleteUser(id);
+            if (deletionResult && !deletionResult.verified) {
+                await verificationTokenRepo.deleteTokenByUserId(deletionResult._id);
+            }
+            return { success: true, message: "Account deleted", data: { account: deletionResult } }
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+        
+    },
 }
 
 export default userAccountService;

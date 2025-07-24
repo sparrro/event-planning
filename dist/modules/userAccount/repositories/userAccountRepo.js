@@ -20,5 +20,8 @@ const userAccountRepo = {
     verifyUser: async (id) => {
         return await userAccountModel_1.default.findByIdAndUpdate(id, { verified: true }, { new: true });
     },
+    deleteUser: async (id) => {
+        return await userAccountModel_1.default.findOneAndDelete({ _id: id });
+    }
 };
 exports.default = userAccountRepo;

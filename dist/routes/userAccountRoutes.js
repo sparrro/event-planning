@@ -12,7 +12,8 @@ userRoutes.post("/login", controller_1.default.logIn);
 userRoutes.post("/logout", authentication_1.authenticate, controller_1.default.logout);
 userRoutes.get("/verify", controller_1.default.verify);
 userRoutes.post("/refresh/:refreshToken", controller_1.default.refresh);
-userRoutes.post("/test", authentication_1.authenticate, (req, res) => {
+userRoutes.delete("/delete/:id", controller_1.default.delete);
+userRoutes.post("/test", authentication_1.authenticate, authentication_1.checkVerified, (req, res) => {
     return res.status(200).json({ success: true, message: "Test successful" });
 });
 exports.default = userRoutes;

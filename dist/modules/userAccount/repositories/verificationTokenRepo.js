@@ -14,5 +14,8 @@ const verificationTokenRepo = {
     deleteToken: async (token) => {
         return await verificationTokenModel_1.default.deleteOne({ token: token });
     },
+    deleteTokenByUserId: async (id) => {
+        return await verificationTokenModel_1.default.deleteOne({ userId: id });
+    }
 };
 exports.default = verificationTokenRepo;

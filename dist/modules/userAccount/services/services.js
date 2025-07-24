@@ -113,7 +113,7 @@ const userAccountService = {
                 const newToken = {
                     token: crypto_1.default.randomBytes(32).toString("hex"),
                     expiresAt: Date.now() + 1000 * 60 * 60 * 24,
-                    userId: tokenResult.userId
+                    userId: tokenResult.userId,
                 };
                 await verificationTokenRepo_1.default.saveToken(newToken);
                 await verificationTokenRepo_1.default.deleteToken(tokenResult.token);
@@ -126,6 +126,9 @@ const userAccountService = {
                     return { success: false, message: "Refresh token expired but failed to send new email" };
             }
             const accountResult = await userAccountRepo_1.default.verifyUser(tokenResult.userId);
+            if (!accountResult)
+                return { success: false, message: "Failed to verify account" };
+            await verificationTokenRepo_1.default.deleteToken(token);
             return { success: true, message: "Account verified", data: { account: accountResult } };
         }
         catch (error) {
@@ -135,6 +138,7 @@ const userAccountService = {
             else
                 return { success: false, message: "Unknown error" };
         }
+        ;
     },
     refresh: async (token) => {
         try {
@@ -154,6 +158,23 @@ const userAccountService = {
             else
                 return { success: false, message: "Unknown error" };
         }
-    }
+    },
+    delete: async (id) => {
+        try {
+            const deletionResult = await userAccountRepo_1.default.deleteUser(id);
+            if (deletionResult && !deletionResult.verified) {
+                await verificationTokenRepo_1.default.deleteTokenByUserId(deletionResult._id);
+            }
+            return { success: true, message: "Account deleted", data: deletionResult };
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            }
+            else
+                return { success: false, message: "Unknown error" };
+        }
+        ;
+    },
 };
 exports.default = userAccountService;
