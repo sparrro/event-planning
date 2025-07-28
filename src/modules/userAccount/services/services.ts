@@ -3,7 +3,11 @@ import userAccountRepo from "../repositories/userAccountRepo";
 import { SALTROUNDS } from "../../../config/environment";
 import crypto from "crypto";
 import verificationTokenRepo from "../repositories/verificationTokenRepo";
-import { sendVerificationMail } from "../../../utils/mailjet";
+import resetTokenRepo from "../repositories/resetTokenRepo";
+import {
+    sendVerificationMail,
+    sendPasswordResetEmail,
+} from "../../../utils/mailjet";
 import {
     giveAccessToken,
     giveRefreshToken,
@@ -158,6 +162,36 @@ const userAccountService = {
         };
         
     },
+    forgotPassword: async (email: string) => {
+
+        try {
+            //hämta användaren
+            const account = await userAccountRepo.findUserByEmail(email);
+            if (!account) return { success: false, message: "Could not find user account" };
+
+            //skapa ett tidsbegränsat token och spara i databasen
+            const token = crypto.randomBytes(32).toString("hex");
+            const resetToken = {
+                token: token,
+                expiresAt: Date.now() + 1000 * 60 * 15,
+                userId: account._id,
+            };
+            await resetTokenRepo.saveToken(resetToken);
+
+            //skicka ett mejl till användaren med en länk med tokenet som parameter
+            const emailResult = await sendPasswordResetEmail(email, account.username, token);
+
+            if (emailResult.success) {
+                return { success: true, message: "Email sent" };
+            } else return { success: false, message: "Error sending password reset email" };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+
+    },
+    resetPassword: async () => {},
 }
 
 export default userAccountService;

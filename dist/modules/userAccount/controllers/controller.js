@@ -98,17 +98,42 @@ const userAccountController = {
         }
     },
     delete: async (req, res) => {
-        const id = req.params.id;
+        const id = req.params.userId;
         try {
             const result = await services_1.default.delete(id);
             if (result.success) {
                 return res.status(200).json(result);
             }
+            else
+                return res.status(400).json(result);
         }
         catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }
         ;
+    },
+    forgotPassword: async (req, res) => {
+        const { email } = req.body;
+        try {
+            const result = await services_1.default.forgotPassword(email);
+            if (result.success) {
+                return res.status(200).json(result);
+            }
+            else
+                return res.status(400).json(result);
+        }
+        catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+    resetPassword: async (req, res) => {
+        //inputdata
+        const { token } = req.body;
+        //try-catch
+        try { }
+        catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
     }
 };
 exports.default = userAccountController;

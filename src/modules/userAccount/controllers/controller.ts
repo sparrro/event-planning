@@ -101,10 +101,37 @@ const userAccountController = {
             const result = await userAccountService.delete(id);
             if (result.success) {
                 return res.status(200).json(result);
-            }
+            } else return res.status(400).json(result);
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         };
+
+    },
+
+    forgotPassword: async (req: Request, res: Response) => {
+
+        const { email } = req.body;
+
+        try {
+            const result = await userAccountService.forgotPassword(email);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+
+    },
+
+    resetPassword: async (req: Request, res: Response) => {
+
+        //inputdata
+        const { token } = req.body;
+
+        //try-catch
+        try {} catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
 
     }
 

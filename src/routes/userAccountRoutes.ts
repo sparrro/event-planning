@@ -35,7 +35,17 @@ userRoutes.delete(
     authenticate,
     checkSameUser,
     userAccountController.delete
-)
+);
+
+userRoutes.post(
+    "/password/sendEmail",
+    userAccountController.forgotPassword
+);
+
+userRoutes.post(
+    "/password/reset",
+    userAccountController.resetPassword
+);
 
 userRoutes.post(
     "/test",
@@ -44,6 +54,6 @@ userRoutes.post(
     (req, res) => {
         return res.status(200).json({success: true, message: "Test successful"});
     }
-)
+);
 
 export default userRoutes;

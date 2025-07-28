@@ -8,6 +8,7 @@ import {
 import { renderEmail } from "./mjml";
 
 const mailjet = Mailjet.apiConnect(MAILJET_API_KEY as string, MAILJET_SECRET_KEY as string);
+
 const sendVerificationMail = async (userEmail: string, username: string, token: string) => {
     try {
         const request = mailjet.post("send", {version: "v3.1"}).request({
@@ -39,4 +40,35 @@ const sendVerificationMail = async (userEmail: string, username: string, token: 
     }
 }
 
-export { sendVerificationMail }
+const sendPasswordResetEmail = async (userEmail: string, username: string, token: string) => {
+    try {
+        const request = mailjet.post("send", {version: "v3.1"}).request({
+            Messages: [
+                {
+                    From: {
+                        Email: EMAIL,
+                        Name: "",
+                    },
+                    To: [
+                        {
+                            Email: userEmail,
+                            Name: username,
+                        }
+                    ],
+                    Subject: "Reset password",
+                    TextPart: "",
+                    HTMLPart: renderEmail({ name: "resetPassword", variables: { url: `https://www.youtube.com/watch?v=dQw4w9WgXcQ` }}), //få igång frontenden och gör en sida för det här
+                }
+            ]
+        });
+        const result = await request;
+        const body = result.body as any;
+        if (body.Messages[0].Status === "success") {
+            return { success: true }
+        } else return { success: false }
+    } catch (error) {
+        return { success: false, error: error };
+    }
+}
+
+export { sendVerificationMail, sendPasswordResetEmail }

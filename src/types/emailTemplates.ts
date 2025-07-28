@@ -4,11 +4,12 @@ type emailTemplate = (
         variables: {
             url: string
         }
-    } |
+    }
+    |
     {
         name: "resetPassword",
         variables: {
-            
+            url: string
         }
     }
 );

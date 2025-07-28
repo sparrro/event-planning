@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkVerified = exports.authenticate = void 0;
+exports.checkSameUser = exports.checkVerified = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const environment_1 = require("../config/environment");
 const userAccountRepo_1 = __importDefault(require("../modules/userAccount/repositories/userAccountRepo"));
@@ -33,3 +33,11 @@ const checkVerified = async (req, res, next) => {
     next();
 };
 exports.checkVerified = checkVerified;
+const checkSameUser = async (req, res, next) => {
+    const { authenticatedUserId } = req.body.user.id;
+    const { userId } = req.params; //håll urler standardiserade efter detta
+    if (authenticatedUserId != userId)
+        return res.status(403).json({ success: false, message: "Can only access own account" });
+    next();
+};
+exports.checkSameUser = checkSameUser;

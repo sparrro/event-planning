@@ -8,6 +8,7 @@ const userAccountRepo_1 = __importDefault(require("../repositories/userAccountRe
 const environment_1 = require("../../../config/environment");
 const crypto_1 = __importDefault(require("crypto"));
 const verificationTokenRepo_1 = __importDefault(require("../repositories/verificationTokenRepo"));
+const resetTokenRepo_1 = __importDefault(require("../repositories/resetTokenRepo"));
 const mailjet_1 = require("../../../utils/mailjet");
 const jwt_1 = require("../../../utils/jwt");
 const userAccountService = {
@@ -165,7 +166,7 @@ const userAccountService = {
             if (deletionResult && !deletionResult.verified) {
                 await verificationTokenRepo_1.default.deleteTokenByUserId(deletionResult._id);
             }
-            return { success: true, message: "Account deleted", data: deletionResult };
+            return { success: true, message: "Account deleted", data: { account: deletionResult } };
         }
         catch (error) {
             if (error instanceof Error) {
@@ -176,5 +177,36 @@ const userAccountService = {
         }
         ;
     },
+    forgotPassword: async (email) => {
+        try {
+            //hämta användaren
+            const account = await userAccountRepo_1.default.findUserByEmail(email);
+            if (!account)
+                return { success: false, message: "Could not find user account" };
+            //skapa ett tidsbegränsat token och spara i databasen
+            const token = crypto_1.default.randomBytes(32).toString("hex");
+            const resetToken = {
+                token: token,
+                expiresAt: Date.now() + 1000 * 60 * 15,
+                userId: account._id,
+            };
+            await resetTokenRepo_1.default.saveToken(resetToken);
+            //skicka ett mejl till användaren med en länk med tokenet som parameter
+            const emailResult = await (0, mailjet_1.sendPasswordResetEmail)(email, account.username, token);
+            if (emailResult.success) {
+                return { success: true, message: "Email sent" };
+            }
+            else
+                return { success: false, message: "Error sending password reset email" };
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            }
+            else
+                return { success: false, message: "Unknown error" };
+        }
+    },
+    resetPassword: async () => { },
 };
 exports.default = userAccountService;

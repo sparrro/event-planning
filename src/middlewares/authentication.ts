@@ -34,7 +34,7 @@ export const checkVerified = async (req: Request, res: Response, next: NextFunct
 
 export const checkSameUser = async (req: Request, res: Response, next: NextFunction) => {
     const { authenticatedUserId } = req.body.user.id;
-    const { userId } = req.params;
+    const { userId } = req.params; //håll urler standardiserade efter detta
     if (authenticatedUserId != userId) return res.status(403).json({ success: false, message: "Can only access own account" });
     next();
 };
