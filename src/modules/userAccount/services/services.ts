@@ -191,7 +191,30 @@ const userAccountService = {
         }
 
     },
-    resetPassword: async () => {},
+    resetPassword: async (token: string, newPassword: string) => {
+        try {
+
+            //hitta användaren från tokenet
+            const tokenResult = await resetTokenRepo.findToken(token);
+            if (!tokenResult) return { success: false, message: "Invalid token provided" };
+            const user = await userAccountRepo.findUserById(tokenResult.userId);
+            if (!user) return { success: false, message: "Invalid token provided" };
+
+            //ändra lösenordet till det nya och spara användaren med det
+            const hashedPassword = await bcrypt.hash(newPassword, SALTROUNDS);
+            const changeResult = await userAccountRepo.changeUserPassword(user._id, hashedPassword);
+
+            //returnera 200
+            if (changeResult && changeResult.hashedPassword === hashedPassword) {
+                return { success: true, message: "Password changed" };
+            } else return { success: false, message: "Error changing password" };
+
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+    },
 }
 
 export default userAccountService;

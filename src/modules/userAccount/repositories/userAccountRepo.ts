@@ -20,6 +20,9 @@ const userAccountRepo = {
     },
     deleteUser: async (id: mongoose.Types.ObjectId) => {
         return await UserAccount.findOneAndDelete({ _id: id });
+    },
+    changeUserPassword: async (id: mongoose.Types.ObjectId, newPassword: string) => {
+        return await UserAccount.findOneAndUpdate({ _id: id }, { hashedPassword: newPassword }, { new: true });
     }
 }
 

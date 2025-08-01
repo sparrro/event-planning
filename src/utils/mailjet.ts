@@ -6,8 +6,13 @@ import {
     BASE_URL
 } from "../config/environment";
 import { renderEmail } from "./mjml";
+import { RequestData } from "node-mailjet/declarations/request/Request";
 
 const mailjet = Mailjet.apiConnect(MAILJET_API_KEY as string, MAILJET_SECRET_KEY as string);
+
+type mailjetResponse = RequestData & {
+    Messages: {Status: string}[]
+}
 
 const sendVerificationMail = async (userEmail: string, username: string, token: string) => {
     try {
@@ -31,7 +36,7 @@ const sendVerificationMail = async (userEmail: string, username: string, token: 
             ]
         });
         const result = await request;
-        const body = result.body as any;
+        const body = result.body as mailjetResponse;
         if (body.Messages[0].Status === "success") {
             return { success: true }
         } else return { success: false }
@@ -62,7 +67,7 @@ const sendPasswordResetEmail = async (userEmail: string, username: string, token
             ]
         });
         const result = await request;
-        const body = result.body as any;
+        const body = result.body as mailjetResponse;
         if (body.Messages[0].Status === "success") {
             return { success: true }
         } else return { success: false }

@@ -43,7 +43,7 @@ userRoutes.post(
 );
 
 userRoutes.post(
-    "/password/reset",
+    "/password/reset/:token",
     userAccountController.resetPassword
 );
 

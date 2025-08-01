@@ -125,10 +125,10 @@ const userAccountController = {
 
     resetPassword: async (req: Request, res: Response) => {
 
-        //inputdata
-        const { token } = req.body;
+        const { token } = req.params;
 
-        //try-catch
+        const { newPassword } = req.body;
+
         try {} catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }

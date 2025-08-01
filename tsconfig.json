@@ -8,6 +8,7 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "esModuleInterop": true,
+        "noImplicitAny": true,
     },
     "include": ["src"],
     "exclude": ["src/types"]
