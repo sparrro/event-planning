@@ -59,7 +59,7 @@ const sendPasswordResetEmail = async (userEmail, username, token) => {
                     ],
                     Subject: "Reset password",
                     TextPart: "",
-                    HTMLPart: (0, mjml_1.renderEmail)({ name: "resetPassword", variables: { url: `https://www.youtube.com/watch?v=dQw4w9WgXcQ` } }), //kom ihåg att byta till basurlen
+                    HTMLPart: (0, mjml_1.renderEmail)({ name: "resetPassword", variables: { url: `https://www.youtube.com/watch?v=dQw4w9WgXcQ` } }), //få igång frontenden och gör en sida för det här
                 }
             ]
         });

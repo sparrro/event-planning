@@ -207,6 +207,33 @@ const userAccountService = {
                 return { success: false, message: "Unknown error" };
         }
     },
-    resetPassword: async () => { },
+    resetPassword: async (token, newPassword) => {
+        try {
+            //hitta användaren från tokenet
+            const tokenResult = await resetTokenRepo_1.default.findToken(token);
+            console.log(token);
+            if (!tokenResult)
+                return { success: false, message: "Invalid token provided 1" };
+            const user = await userAccountRepo_1.default.findUserById(tokenResult.userId);
+            if (!user)
+                return { success: false, message: "Invalid token provided 2" };
+            //ändra lösenordet till det nya och spara användaren med det
+            const hashedPassword = await bcrypt_1.default.hash(newPassword, environment_1.SALTROUNDS);
+            const changeResult = await userAccountRepo_1.default.changeUserPassword(user._id, hashedPassword);
+            //returnera 200
+            if (changeResult && changeResult.hashedPassword === hashedPassword) {
+                return { success: true, message: "Password changed" };
+            }
+            else
+                return { success: false, message: "Error changing password" };
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            }
+            else
+                return { success: false, message: "Unknown error" };
+        }
+    },
 };
 exports.default = userAccountService;

@@ -22,6 +22,9 @@ const userAccountRepo = {
     },
     deleteUser: async (id) => {
         return await userAccountModel_1.default.findOneAndDelete({ _id: id });
+    },
+    changeUserPassword: async (id, newPassword) => {
+        return await userAccountModel_1.default.findOneAndUpdate({ _id: id }, { hashedPassword: newPassword }, { new: true });
     }
 };
 exports.default = userAccountRepo;

@@ -14,7 +14,7 @@ userRoutes.get("/verify", controller_1.default.verify);
 userRoutes.post("/refresh/:refreshToken", controller_1.default.refresh);
 userRoutes.delete("/delete/:userId", authentication_1.authenticate, authentication_1.checkSameUser, controller_1.default.delete);
 userRoutes.post("/password/sendEmail", controller_1.default.forgotPassword);
-userRoutes.post("/password/reset", controller_1.default.resetPassword);
+userRoutes.post("/password/reset/:token", controller_1.default.resetPassword);
 userRoutes.post("/test", authentication_1.authenticate, authentication_1.checkVerified, (req, res) => {
     return res.status(200).json({ success: true, message: "Test successful" });
 });
