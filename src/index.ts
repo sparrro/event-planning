@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import {
+    BASE_URL,
     DB_URI,
     PORT,
 } from "./config/environment";
@@ -20,8 +21,8 @@ const connectToDatabase = () => {
 
     mongoose.connection.once("open", () => {
         console.log("Connected to database");
-        app.listen(PORT, () => {
-            console.log(`Server running at http://127.0.0.1:${PORT}`);
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`Server running at ${BASE_URL}`);
         });
     });    
 }
