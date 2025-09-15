@@ -7,4 +7,4 @@ type userAccountType = {
     refreshToken?: string
 };
 
-export default userAccountType
+export default userAccountType;
