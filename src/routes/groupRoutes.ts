@@ -11,7 +11,7 @@ groupRoutes.post(
 );
 
 groupRoutes.put(
-    "/join",
+    "/join/:groupId",
     authenticate,
     groupController.joinGroup,
 );

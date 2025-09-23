@@ -6,7 +6,10 @@ const userGroupSchema = new mongoose.Schema({
         required: true,
     },
     members: {
-        type: [mongoose.Types.ObjectId],
+        type: [{
+            type: mongoose.Types.ObjectId,
+            ref: "UserAccount",
+        }],
         required: true,
     },
     startedAt: {
