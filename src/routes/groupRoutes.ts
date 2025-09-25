@@ -17,7 +17,7 @@ groupRoutes.put(
 );
 
 groupRoutes.put(
-    "/leave",
+    "/leave/:groupId",
     authenticate,
     groupController.leaveGroup,
 );

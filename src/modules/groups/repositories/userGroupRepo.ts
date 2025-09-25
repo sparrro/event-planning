@@ -16,7 +16,10 @@ const userGroupRepo = {
         return await UserGroup.create(groupData);
     },
     addUserToGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-        return await UserGroup.findByIdAndUpdate(groupId, { $addToSet: { members: userId } });
+        return await UserGroup.findByIdAndUpdate(groupId, { $addToSet: { members: userId } }, { new: true });
+    },
+    removeUserFromGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
+        return await UserGroup.findByIdAndUpdate(groupId, { $pull: { members: userId } }, { new: true });
     },
 };
 

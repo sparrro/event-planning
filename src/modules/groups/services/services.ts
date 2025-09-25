@@ -35,10 +35,8 @@ const groupService = {
 
     joinGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         try {
-            //hitta gruppen och kolla om man redan är i den
             if (await userGroupRepo.findUserInGroup(groupId, userId)) return { success: false, message: "User already in group" };
 
-            //om inte lägg till en i gruppen och spara
             const group = await userGroupRepo.addUserToGroup(groupId, userId);
             return { success: true, message: "User added to group", data: { group } };
 
@@ -49,8 +47,11 @@ const groupService = {
         }
     },
 
-    leaveGroup: async (groupId: mongoose.Types.ObjectId) => {
-        try {} catch (error) {
+    leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
+        try {
+            const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
+            return { success: true, message: "User removed from group", data: { group } };
+        } catch (error) {
             if (error instanceof Error) {
                 return { success: false, message: error.message };
             } else return { success: false, message: "Unknown error" };
