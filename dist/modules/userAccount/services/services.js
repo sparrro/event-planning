@@ -211,12 +211,11 @@ const userAccountService = {
         try {
             //hitta användaren från tokenet
             const tokenResult = await resetTokenRepo_1.default.findToken(token);
-            console.log(token);
             if (!tokenResult)
-                return { success: false, message: "Invalid token provided 1" };
+                return { success: false, message: "Invalid token provided" };
             const user = await userAccountRepo_1.default.findUserById(tokenResult.userId);
             if (!user)
-                return { success: false, message: "Invalid token provided 2" };
+                return { success: false, message: "Invalid token provided" };
             //ändra lösenordet till det nya och spara användaren med det
             const hashedPassword = await bcrypt_1.default.hash(newPassword, environment_1.SALTROUNDS);
             const changeResult = await userAccountRepo_1.default.changeUserPassword(user._id, hashedPassword);

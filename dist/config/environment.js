@@ -7,7 +7,7 @@ exports.EMAIL = exports.MAILJET_SECRET_KEY = exports.MAILJET_API_KEY = exports.J
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.DB_URI = process.env.MONGODB_URI;
-exports.PORT = process.env.PORT;
+exports.PORT = Number(process.env.PORT);
 exports.BASE_URL = process.env.BASE_URL;
 exports.SALTROUNDS = Number(process.env.SALTROUNDS);
 exports.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;

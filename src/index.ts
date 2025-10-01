@@ -23,6 +23,7 @@ const connectToDatabase = () => {
         console.log("Connected to database");
         app.listen(PORT, "0.0.0.0", () => {
             console.log(`Server running at ${BASE_URL}`);
+            console.log(DB_URI)
         });
     });    
 }
