@@ -26,6 +26,6 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/index",
-    "dev": "cross-env NODE_ENV=development node dist/index"
+    "dev": "node dist/index"
   }
 }

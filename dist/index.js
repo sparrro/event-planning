@@ -18,8 +18,9 @@ const connectToDatabase = () => {
     mongoose_1.default.connect(environment_1.DB_URI);
     mongoose_1.default.connection.once("open", () => {
         console.log("Connected to database");
-        app.listen(environment_1.PORT, () => {
-            console.log(`Server running at http://127.0.0.1:${environment_1.PORT}`);
+        app.listen(environment_1.PORT, "0.0.0.0", () => {
+            console.log(`Server running at ${environment_1.BASE_URL}`);
+            console.log(environment_1.DB_URI);
         });
     });
 };

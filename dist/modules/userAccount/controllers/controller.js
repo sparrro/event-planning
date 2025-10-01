@@ -128,7 +128,6 @@ const userAccountController = {
     },
     resetPassword: async (req, res) => {
         const { token } = req.params;
-        console.log(req.params);
         const { newPassword } = req.body;
         try {
             const result = await services_1.default.resetPassword(token, newPassword);
