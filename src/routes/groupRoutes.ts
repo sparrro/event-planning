@@ -21,3 +21,5 @@ groupRoutes.put(
     authenticate,
     groupController.leaveGroup,
 );
+
+export default groupRoutes;

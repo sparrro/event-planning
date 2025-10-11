@@ -7,6 +7,7 @@ import {
     PORT,
 } from "./config/environment";
 import userRoutes from "./routes/userAccountRoutes";
+import groupRoutes from "./routes/groupRoutes";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(cors({origin: "*", optionsSuccessStatus: 200}));
 app.use(express.json());
 
 app.use("/user", userRoutes);
+app.use("/group", groupRoutes);
 
 const connectToDatabase = () => {
     if (!DB_URI) return;

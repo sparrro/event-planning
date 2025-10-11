@@ -8,10 +8,12 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const environment_1 = require("./config/environment");
 const userAccountRoutes_1 = __importDefault(require("./routes/userAccountRoutes"));
+const groupRoutes_1 = __importDefault(require("./routes/groupRoutes"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(express_1.default.json());
 app.use("/user", userAccountRoutes_1.default);
+app.use("/group", groupRoutes_1.default);
 const connectToDatabase = () => {
     if (!environment_1.DB_URI)
         return;
@@ -20,7 +22,6 @@ const connectToDatabase = () => {
         console.log("Connected to database");
         app.listen(environment_1.PORT, "0.0.0.0", () => {
             console.log(`Server running at ${environment_1.BASE_URL}`);
-            console.log(environment_1.DB_URI);
         });
     });
 };
