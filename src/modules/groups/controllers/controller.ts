@@ -1,4 +1,3 @@
-import Joi from "joi";
 import groupService from "../services/services";
 import {
     Request,
@@ -25,12 +24,12 @@ const groupController = {
 
     joinGroup: async (req: Request, res: Response) => {
         
-        const { user } = req.body;
+        const { user } = req;
         const { groupId } = req.params;
         if (!groupId) return res.status(400).json({ success: false, message: "Missing groupId" });
 
         try {
-            const result = await groupService.joinGroup(groupId as unknown as mongoose.Types.ObjectId, user.id);
+            const result = await groupService.joinGroup(groupId as unknown as mongoose.Types.ObjectId, user!.id);
             if (result.success) {
                 return res.status(200).json(result);
             } else return res.status(400).json(result);
@@ -41,12 +40,12 @@ const groupController = {
 
     leaveGroup: async (req: Request, res: Response) => {
         
-        const { user } = req.body;
+        const { user } = req;
         const { groupId } = req.params;
         if (!groupId) return res.status(400).json({ success: false, message: "Missing groupId" });
 
         try {
-            const result = await groupService.leaveGroup(groupId as unknown as mongoose.Types.ObjectId, user.id);
+            const result = await groupService.leaveGroup(groupId as unknown as mongoose.Types.ObjectId, user!.id);
             if (result.success) {
                 return res.status(200).json(result);
             } else return res.status(400).json(result);
