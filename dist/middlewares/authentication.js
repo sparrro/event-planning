@@ -20,13 +20,15 @@ const authenticate = (req, res, next) => {
         const now = Math.floor(Date.now() / 1000);
         if (now > user.exp)
             return res.status(401).json({ success: false, message: "Access token expired" });
-        req.body.user = user;
+        req.user = user;
         next();
     });
 };
 exports.authenticate = authenticate;
 const checkVerified = async (req, res, next) => {
-    const { user } = req.body;
+    const { user } = req;
+    if (!user)
+        return { success: false, message: "No user to" };
     const account = await userAccountRepo_1.default.findUserById(user.id);
     if (!account?.verified)
         return res.status(401).json({ success: false, message: "User not verified" });
@@ -34,7 +36,7 @@ const checkVerified = async (req, res, next) => {
 };
 exports.checkVerified = checkVerified;
 const checkSameUser = async (req, res, next) => {
-    const { authenticatedUserId } = req.body.user.id;
+    const authenticatedUserId = req.user.id;
     const { userId } = req.params; //håll urler standardiserade efter detta
     if (authenticatedUserId != userId)
         return res.status(403).json({ success: false, message: "Can only access own account" });

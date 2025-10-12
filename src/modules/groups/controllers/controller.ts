@@ -10,10 +10,11 @@ const groupController = {
     createGroup: async (req: Request, res: Response) => {
         
         const data = req.body;
+        const { user } = req;
         if (!data.groupName) return res.status(400).json({ success: false, message: "Missing group name" });
 
         try {
-            const result = await groupService.createGroup({ creatorId: data.user.id, name: data.groupName });
+            const result = await groupService.createGroup({ creatorId: user!.id, name: data.groupName });
             if (result.success) {
                 return res.status(201).json(result);
             } else return res.status(400).json(result);

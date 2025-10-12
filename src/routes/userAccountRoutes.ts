@@ -50,9 +50,8 @@ userRoutes.post(
 userRoutes.post(
     "/test",
     authenticate,
-    checkVerified,
     (req, res) => {
-        return res.status(200).json({success: true, message: "Test successful"});
+        return res.status(200).json({success: true, message: "Test successful", data: { id: req.user }});
     }
 );
 

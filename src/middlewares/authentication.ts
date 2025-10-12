@@ -27,7 +27,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
 export const checkVerified = async (req: Request, res: Response, next: NextFunction) => {
     const { user } = req;
-    if (!user) return { success: false, message: "No user to" }
+    if (!user) return { success: false, message: "No access token provided" }
     const account = await userAccountRepo.findUserById(user.id);
     if (!account?.verified) return res.status(401).json({ success: false, message: "User not verified" });
     next();
