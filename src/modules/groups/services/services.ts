@@ -56,6 +56,17 @@ const groupService = {
                 return { success: false, message: error.message };
             } else return { success: false, message: "Unknown error" };
         }
+    },
+
+    getAllGroups: async () => {
+        try {
+            const groups = await userGroupRepo.getAllGroups();
+            return { success: true, message: "Groups got", data: { groups } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
     }
 
 };

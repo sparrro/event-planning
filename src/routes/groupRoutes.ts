@@ -22,4 +22,9 @@ groupRoutes.put(
     groupController.leaveGroup,
 );
 
+groupRoutes.get(
+    "/",
+    groupController.getAllGroups,
+);
+
 export default groupRoutes;
