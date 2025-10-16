@@ -27,4 +27,9 @@ groupRoutes.get(
     groupController.getAllGroups,
 );
 
+groupRoutes.get(
+    "/mygroups",
+    groupController.getGroupsByFounder,
+);
+
 export default groupRoutes;

@@ -64,7 +64,20 @@ const groupController = {
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }
-    }
+    },
+
+    getGroupsByFounder: async (req: Request, res: Response) => {
+        const { user } = req;
+
+        try {
+            const result = await groupService.getGroupsByFounder(user!.id);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
 
 };
 
