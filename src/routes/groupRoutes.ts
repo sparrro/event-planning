@@ -29,6 +29,7 @@ groupRoutes.get(
 
 groupRoutes.get(
     "/mygroups",
+    authenticate,
     groupController.getGroupsByFounder,
 );
 
