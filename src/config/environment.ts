@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+};
 
 export const DB_URI = process.env.MONGODB_URI;
 
