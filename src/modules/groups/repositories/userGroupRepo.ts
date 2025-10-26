@@ -27,6 +27,9 @@ const userGroupRepo = {
     getGroupsByFounder: async (id: mongoose.Types.ObjectId) => {
         return await UserGroup.find({ creator: id });
     },
+    getGroupsByMembership: async (id: mongoose.Types.ObjectId) => {
+        return await UserGroup.find({ members: id });
+    },
 };
 
 export default userGroupRepo;

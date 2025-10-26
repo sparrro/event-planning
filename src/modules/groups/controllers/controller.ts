@@ -79,6 +79,19 @@ const groupController = {
         }
     },
 
+    getGroupsByMembership: async (req: Request, res: Response) => {
+        const { userId } = req.params;
+
+        try {
+            const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(404).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+
 };
 
 export default groupController;

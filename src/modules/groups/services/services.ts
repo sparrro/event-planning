@@ -72,7 +72,18 @@ const groupService = {
     getGroupsByFounder: async (id: mongoose.Types.ObjectId) => {
         try {
             const groups = await userGroupRepo.getGroupsByFounder(id);
-            return { success: true, message: "Groups got", data: { groups } }
+            return { success: true, message: "Groups got", data: { groups } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+    },
+
+    getGroupsByMembership: async (id: mongoose.Types.ObjectId) => {
+        try {
+            const groups = await userGroupRepo.getGroupsByMembership(id);
+            return { success: true, message: "Groups got", data: { groups } };
         } catch (error) {
             if (error instanceof Error) {
                 return { success: false, message: error.message };

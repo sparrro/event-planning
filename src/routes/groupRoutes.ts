@@ -32,4 +32,9 @@ groupRoutes.get(
     groupController.getGroupsByFounder,
 );
 
+groupRoutes.get(
+    "/memberships/:userId",
+    groupController.getGroupsByMembership,
+);
+
 export default groupRoutes;
