@@ -49,6 +49,10 @@ const groupService = {
 
     leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         try {
+            const checkGroup = await userGroupRepo.findGroup(groupId);
+            if (checkGroup?.creator == userId) {
+                return { success: false, message: "Founder of a group may not leave" }
+            };
             const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
             return { success: true, message: "User removed from group", data: { group } };
         } catch (error) {
