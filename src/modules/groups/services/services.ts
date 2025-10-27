@@ -49,8 +49,45 @@ const groupService = {
 
     leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         try {
+            const checkGroup = await userGroupRepo.findGroup(groupId);
+            if (checkGroup?.creator == userId) {
+                return { success: false, message: "Founder of a group may not leave" }
+            };
             const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
             return { success: true, message: "User removed from group", data: { group } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+    },
+
+    getAllGroups: async () => {
+        try {
+            const groups = await userGroupRepo.getAllGroups();
+            return { success: true, message: "Groups got", data: { groups } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+    },
+
+    getGroupsByFounder: async (id: mongoose.Types.ObjectId) => {
+        try {
+            const groups = await userGroupRepo.getGroupsByFounder(id);
+            return { success: true, message: "Groups got", data: { groups } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        }
+    },
+
+    getGroupsByMembership: async (id: mongoose.Types.ObjectId) => {
+        try {
+            const groups = await userGroupRepo.getGroupsByMembership(id);
+            return { success: true, message: "Groups got", data: { groups } };
         } catch (error) {
             if (error instanceof Error) {
                 return { success: false, message: error.message };

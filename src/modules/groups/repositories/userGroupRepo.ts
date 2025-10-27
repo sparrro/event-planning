@@ -21,6 +21,15 @@ const userGroupRepo = {
     removeUserFromGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         return await UserGroup.findByIdAndUpdate(groupId, { $pull: { members: userId } }, { new: true });
     },
+    getAllGroups: async () => {
+        return await UserGroup.find({});
+    },
+    getGroupsByFounder: async (id: mongoose.Types.ObjectId) => {
+        return await UserGroup.find({ creator: id });
+    },
+    getGroupsByMembership: async (id: mongoose.Types.ObjectId) => {
+        return await UserGroup.find({ members: id });
+    },
 };
 
 export default userGroupRepo;

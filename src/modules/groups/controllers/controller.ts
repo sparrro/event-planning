@@ -55,6 +55,43 @@ const groupController = {
         }
     },
 
+    getAllGroups: async (req: Request, res: Response) => {
+        try {
+            const result = await groupService.getAllGroups();
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+
+    getGroupsByFounder: async (req: Request, res: Response) => {
+        const { user } = req;
+
+        try {
+            const result = await groupService.getGroupsByFounder(user!.id);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+
+    getGroupsByMembership: async (req: Request, res: Response) => {
+        const { userId } = req.params;
+
+        try {
+            const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(404).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+
 };
 
 export default groupController;

@@ -22,4 +22,20 @@ groupRoutes.put(
     groupController.leaveGroup,
 );
 
+groupRoutes.get(
+    "/",
+    groupController.getAllGroups,
+);
+
+groupRoutes.get(
+    "/mygroups",
+    authenticate,
+    groupController.getGroupsByFounder,
+);
+
+groupRoutes.get(
+    "/memberships/:userId",
+    groupController.getGroupsByMembership,
+);
+
 export default groupRoutes;
