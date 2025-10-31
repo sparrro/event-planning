@@ -18,7 +18,7 @@ userRoutes.post(
     "/logout",
     authenticate,
     userAccountController.logout
-)
+);
 
 userRoutes.get(
     "/verify",

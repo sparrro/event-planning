@@ -8,6 +8,7 @@ import {
 } from "./config/environment";
 import userRoutes from "./routes/userAccountRoutes";
 import groupRoutes from "./routes/groupRoutes";
+import eventRoutes from "./routes/eventRoutes";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/user", userRoutes);
 app.use("/group", groupRoutes);
+app.use("/event", eventRoutes);
 
 const connectToDatabase = () => {
     if (!DB_URI) return;
@@ -27,6 +29,6 @@ const connectToDatabase = () => {
             console.log(`Server running at ${BASE_URL}`);
         });
     });    
-}
+};
 
 connectToDatabase();
