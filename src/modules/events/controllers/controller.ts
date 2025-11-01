@@ -6,6 +6,7 @@ import {
 import mongoose from "mongoose";
 import eventType from "../../../types/modelTypes/event";
 import Joi from "joi";
+import eventCreationInputData from "../../../types/eventInputData";
 
 const eventController = {
 
@@ -21,8 +22,16 @@ const eventController = {
         });
         const { error } = eventSchema.validate(data);
         if (error) return res.status(400).json({ success:false, message: error.message });
-    
-        try {} catch (error) {
+        const inputData: eventCreationInputData = {
+            ...data,
+            creatorId: user!.id,
+        }
+        try {
+            const result = await eventService.create(inputData);
+            if (result.success) {
+                return res.status(201).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
         }
 

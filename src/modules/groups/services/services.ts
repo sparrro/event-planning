@@ -21,10 +21,10 @@ const groupService = {
             };
             
             //skapa gruppen
-            const result = await userGroupRepo.createGroup(groupCreationInput);
+            const group = await userGroupRepo.createGroup(groupCreationInput);
 
             //skicka svar
-            return { success: true, message: "Group created", data: { userGroup: result } };
+            return { success: true, message: "Group created", data: { group } };
 
         } catch (error) {
             if (error instanceof Error) {
