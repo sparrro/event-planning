@@ -17,6 +17,7 @@ const eventService = {
                 const group = await userGroupRepo.findGroup(data.groupId);
                 if (!group) return { success: false, message: "Invalid group id provided" };
                 eventData.participants = group.members as unknown as mongoose.Types.ObjectId[];
+                eventData.groups = [data.groupId];
             } else {
                 eventData.participants = [data.creatorId];
             };
