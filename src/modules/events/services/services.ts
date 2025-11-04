@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import eventRepo from "../repositories/eventRepo";
 
 const eventService = {
+
     create: async (data: eventCreationInputData) => {
         try {
             let eventData: eventType = {
@@ -29,6 +30,20 @@ const eventService = {
             } else return { success: false, message: "Unknown error" };
         };
     },
+
+    joinAsIndividual: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
+        try {
+            const userInEvent = await eventRepo.findUserInEvent(userId, eventId);
+            if (userInEvent) return { success: false, message: "User already participant in event" };
+            const event = await eventRepo.addIndividual(userId, eventId);
+            return { success: true, message: "User signed up for event", data: { event } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
+
 };
 
 export default eventService;
