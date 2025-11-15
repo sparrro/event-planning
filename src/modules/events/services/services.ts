@@ -44,6 +44,23 @@ const eventService = {
         };
     },
 
+    joinAsGroup: async (groupId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
+        try {
+            const groupAlreadyInEvent = await eventRepo.findGroupInEvent(groupId, eventId);
+            if (groupAlreadyInEvent) return { success: false, message: "Group already participant in event" };
+            const group = await userGroupRepo.findGroup(groupId);
+            if (!group) return { success: false, message: "Invalid group id provided" };
+            const members = group.members as unknown as mongoose.Types.ObjectId[];
+            if (!members.includes(userId)) return { success: false, message: "User not in specified group" };
+            const event = await eventRepo.addgroup(groupId, eventId, group.members as unknown as mongoose.Types.ObjectId[]);
+            return { success: true, message: "Group signed up for event", data: { event } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
+
 };
 
 export default eventService;
