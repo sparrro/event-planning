@@ -88,6 +88,19 @@ const eventController = {
     leave: async (req: Request, res: Response) => {
 
         const { user } = req;
+        const { eventId } = req.params;
+
+        const event = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
+        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
+
+        try {
+            const result = await eventService.leave(eventId as unknown as mongoose.Types.ObjectId, user!.id);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
     },
 
 };

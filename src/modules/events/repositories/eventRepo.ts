@@ -18,9 +18,12 @@ const eventRepo = {
     addIndividual: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
         return await Event.findByIdAndUpdate(eventId, { $addToSet: { participants: userId } }, { new: true });
     },
-    addgroup: async (groupId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId, members: mongoose.Types.ObjectId[]) => {
+    addGroup: async (groupId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId, members: mongoose.Types.ObjectId[]) => {
         return await Event.findByIdAndUpdate(eventId, { groups: groupId, $addToSet: { participants: { $each: members } } });
     },
+    removeIndividual: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
+        return await Event.findByIdAndUpdate(eventId, { $pull: { participants: userId } });
+    }
 };
 
 export default eventRepo;
