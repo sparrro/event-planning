@@ -23,7 +23,13 @@ const eventRepo = {
     },
     removeIndividual: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
         return await Event.findByIdAndUpdate(eventId, { $pull: { participants: userId } });
-    }
+    },
+    delete: async (eventId: mongoose.Types.ObjectId) => {
+        return await Event.findByIdAndDelete(eventId);
+    },
+    findEventWithFounder: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
+        return await Event.exists({ _id: eventId, organiser: userId });
+    },
 };
 
 export default eventRepo;

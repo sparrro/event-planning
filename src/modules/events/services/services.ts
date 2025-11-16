@@ -63,8 +63,21 @@ const eventService = {
 
     leave: async (eventId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         try {
-            const eventSansUser = await eventRepo.removeIndividual(userId, eventId);
-            return { success: true, message: "User removed from event" };
+            const event = await eventRepo.removeIndividual(userId, eventId);
+            return { success: true, message: "User removed from event", data: { event } };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
+
+    delete: async (eventId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
+        try {
+            const userIsFounder = await eventRepo.findEventWithFounder(userId, eventId);
+            if (!userIsFounder) return ({ success: false, message: "Event can only be deleted by its organiser" });
+            const deletedEvent = await eventRepo.delete(eventId);
+            return { success: true, message: "Event deleted", data: { deletedEvent } };
         } catch (error) {
             if (error instanceof Error) {
                 return { success: false, message: error.message };
