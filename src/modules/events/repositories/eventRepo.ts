@@ -19,10 +19,10 @@ const eventRepo = {
         return await Event.findByIdAndUpdate(eventId, { $addToSet: { participants: userId } }, { new: true });
     },
     addGroup: async (groupId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId, members: mongoose.Types.ObjectId[]) => {
-        return await Event.findByIdAndUpdate(eventId, { groups: groupId, $addToSet: { participants: { $each: members } } });
+        return await Event.findByIdAndUpdate(eventId, { $addToSet: { participants: { $each: members }, groups: groupId } }, { new: true });
     },
     removeIndividual: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
-        return await Event.findByIdAndUpdate(eventId, { $pull: { participants: userId } });
+        return await Event.findByIdAndUpdate(eventId, { $pull: { participants: userId } }, { new: true });
     },
     delete: async (eventId: mongoose.Types.ObjectId) => {
         return await Event.findByIdAndDelete(eventId);
