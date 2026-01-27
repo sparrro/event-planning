@@ -33,6 +33,7 @@ const groupSchema = new mongoose.Schema({
     },
     subEvents: [{
         type: mongoose.Types.ObjectId,
+        ref: "Subevent",
         required: true,
     }],
     createdAt: {
