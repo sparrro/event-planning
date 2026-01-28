@@ -30,6 +30,9 @@ const eventRepo = {
     findEventWithFounder: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
         return await Event.exists({ _id: eventId, organiser: userId });
     },
+    addSubevent: async (eventId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
+        return await Event.findByIdAndUpdate(eventId, { $addToSet: { subEvents: subeventId } });
+    },
 };
 
 export default eventRepo;

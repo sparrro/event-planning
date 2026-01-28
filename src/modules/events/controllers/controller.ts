@@ -24,7 +24,7 @@ const eventController = {
             groupId: Joi.string()
         });
         const { error } = eventSchema.validate(data);
-        if (error) return res.status(400).json({ success:false, message: error.message });
+        if (error) return res.status(400).json({ success: false, message: error.message });
 
         const inputData: eventCreationInputData = {
             ...data,

@@ -9,6 +9,7 @@ import {
 import userRoutes from "./routes/userAccountRoutes";
 import groupRoutes from "./routes/groupRoutes";
 import eventRoutes from "./routes/eventRoutes";
+import subeventRoutes from "./routes/subeventRoutes";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/user", userRoutes);
 app.use("/group", groupRoutes);
 app.use("/event", eventRoutes);
+app.use("/subevent", subeventRoutes);
 
 const connectToDatabase = () => {
     if (!DB_URI) return;
