@@ -42,6 +42,20 @@ const subEventController = {
         }
     },
 
+    getByUser: async (req: Request, res: Response) => {
+
+        const { user } = req;
+
+        try {
+            const result = await subeventService.getByUser(user!.id);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    },
+
 };
 
 export default subEventController;

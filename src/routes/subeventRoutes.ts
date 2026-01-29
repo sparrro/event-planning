@@ -10,4 +10,10 @@ subeventRoutes.post(
     subEventController.add
 );
 
+subeventRoutes.get(
+    "/",
+    authenticate,
+    subEventController.getByUser
+)
+
 export default subeventRoutes;
