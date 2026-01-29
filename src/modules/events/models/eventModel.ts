@@ -31,11 +31,6 @@ const groupSchema = new mongoose.Schema({
         min: Date.now() + 1000 * 60 * 60 * 48,
         required: true,
     },
-    subEvents: [{
-        type: mongoose.Types.ObjectId,
-        ref: "Subevent",
-        required: true,
-    }],
     createdAt: {
         type: Date,
         default: Date.now(),

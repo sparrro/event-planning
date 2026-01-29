@@ -11,7 +11,6 @@ const eventService = {
             let eventData: eventType = {
                 ...data,
                 organiser: data.creatorId,
-                subevents: [],
                 participants: [],
             };
             if (data.groupId) {

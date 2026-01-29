@@ -7,8 +7,7 @@ type eventType = {
     groups?: mongoose.Types.ObjectId[],
     participants: mongoose.Types.ObjectId[],
     startDate: Date,
-    endDate: Date,
-    subevents: mongoose.Types.ObjectId[],
+    endDate: Date
 };
 
 export default eventType;

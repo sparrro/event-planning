@@ -12,7 +12,6 @@ const subeventService = {
                 participants: [input.userId]
             }
             const subevent = await subeventRepo.add(subeventData);
-            const event = await eventRepo.addSubevent(input.eventId, subevent._id);
             return { success: true, message: "Subevent added", data: { subevent } };
         } catch (error) {
             if (error instanceof Error) {

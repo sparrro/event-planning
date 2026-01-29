@@ -21,6 +21,11 @@ const subeventSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "UserAccount",
     }],
+    eventId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Event",
+        required: true
+    }
 });
 
 export default mongoose.model("Subevent", subeventSchema);
