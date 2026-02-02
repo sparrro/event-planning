@@ -14,6 +14,12 @@ subeventRoutes.get(
     "/",
     authenticate,
     subEventController.getByUser
+);
+
+subeventRoutes.get(
+    "/:eventId",
+    authenticate,
+    subEventController.getByEventAndUser
 )
 
 export default subeventRoutes;

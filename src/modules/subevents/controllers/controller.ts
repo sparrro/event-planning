@@ -6,6 +6,8 @@ import {
 import eventRepo from "../../events/repositories/eventRepo";
 import Joi from "joi";
 import subeventCreationInputData from "../../../types/subeventInputData";
+import mongoose from "mongoose";
+import subeventRepo from "../repositories/subeventRepo";
 
 const subEventController = {
 
@@ -55,6 +57,24 @@ const subEventController = {
             return res.status(500).json({ success: false, message: "Server error" });
         }
     },
+
+    getByEventAndUser: async (req: Request, res: Response) => {
+
+        const { user } = req;
+        const { eventId } = req.params;
+
+        const eventExists = await subeventRepo.findEvent(eventId as unknown as mongoose.Types.ObjectId);
+        if (!eventExists) return res.status(404).json({ success: false, message: "Event not found" });
+
+        try {
+            const result = await subeventService.getbyEventAndUser(user!.id, eventId as unknown as mongoose.Types.ObjectId);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        }
+    }
 
 };
 

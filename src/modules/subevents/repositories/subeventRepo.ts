@@ -8,7 +8,10 @@ const subeventRepo = {
     },
     getByUser: async (userId: mongoose.Types.ObjectId) => {
         return await Subevent.find({ participants: userId });
-    }
+    },
+    findEvent: async (eventId: mongoose.Types.ObjectId) => {
+        return await Subevent.findById(eventId);
+    },
 };
 
 export default subeventRepo;

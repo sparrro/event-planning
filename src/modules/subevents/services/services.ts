@@ -30,7 +30,15 @@ const subeventService = {
                 return { success: false, message: error.message };
             } else return { success: false, message: "Unknown error" };
         }
-    }
+    },
+
+    getbyEventAndUser: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
+        try {} catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
 
 };
 
