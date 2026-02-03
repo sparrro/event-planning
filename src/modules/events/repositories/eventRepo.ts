@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import eventType from "../../../types/modelTypes/event";
 import Event from "../models/eventModel";
 
+//alla utom create, find, delete, findeventwithfounder är delenda
 const eventRepo = {
     create: async (eventData: eventType) => {
         return await Event.create(eventData);

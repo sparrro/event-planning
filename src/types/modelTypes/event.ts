@@ -5,7 +5,6 @@ type eventType = {
     organiser: mongoose.Types.ObjectId,
     place: string,
     groups?: mongoose.Types.ObjectId[],
-    participants: mongoose.Types.ObjectId[],
     startDate: Date,
     endDate: Date
 };

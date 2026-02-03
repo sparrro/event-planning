@@ -17,10 +17,6 @@ const groupSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "UserGroup",
     }],
-    participants: [{
-        type: mongoose.Types.ObjectId,
-        ref: "UserAccount"
-    }],
     startDate: {
         type: Date,
         min: Date.now() + 1000 * 60 * 60 * 24,
