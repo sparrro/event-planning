@@ -17,10 +17,6 @@ const subeventSchema = new mongoose.Schema({
         min: Date.now(),
         required: true,
     },
-    participants: [{
-        type: mongoose.Types.ObjectId,
-        ref: "UserAccount",
-    }],
     eventId: {
         type: mongoose.Types.ObjectId,
         ref: "Event",

@@ -5,7 +5,6 @@ type subeventType = {
     desc?: string,
     place: string,
     startDate: Date,
-    participants: mongoose.Types.ObjectId[],
     eventId: mongoose.Types.ObjectId,
 };
 

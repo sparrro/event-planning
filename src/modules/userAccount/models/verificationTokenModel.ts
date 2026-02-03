@@ -7,7 +7,8 @@ const verificationTokenSchema = new mongoose.Schema({
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: "UserAccount"
     },
     expiresAt: {
         type: Date,

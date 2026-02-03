@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
-const eventParticipationSchema = new mongoose.Schema({
+const subEventParticipationSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
         required: true,
         ref: "UserAccount"
     },
-    eventId: {
+    subeventId: {
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Event"
+        ref: "Subevent"
     },
 });
 
-export default mongoose.model("EventParticipation", eventParticipationSchema);
+export default mongoose.model("SubeventParticipation", subEventParticipationSchema);
