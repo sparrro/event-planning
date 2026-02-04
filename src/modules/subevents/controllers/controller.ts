@@ -8,13 +8,14 @@ import Joi from "joi";
 import subeventCreationInputData from "../../../types/subeventInputData";
 import mongoose from "mongoose";
 import subeventRepo from "../repositories/subeventRepo";
+import eventParticipationRepo from "../../events/repositories/eventParticipationRepo";
 
 const subEventController = {
 
     add: async (req: Request, res: Response) => {
 
         const { user } = req;
-        const { data } = req.body;
+        const data = req.body;
 
         const subEventSchema = Joi.object({
             name: Joi.string().required(),
@@ -26,7 +27,7 @@ const subEventController = {
         const { error } = subEventSchema.validate(data);
         if (error) return res.status(400).json({ success: false, message: error.message });
 
-        const event = await eventRepo.findUserInEvent(user!.id, data.eventId);
+        const event = await eventParticipationRepo.findUserInEvent(user!.id, data.eventId);
         if (!event) return res.status(401).json({ success: false, message: "Must be participant in event to add subevent" });
 
         const inputData: subeventCreationInputData = {
@@ -63,7 +64,7 @@ const subEventController = {
         const { user } = req;
         const { eventId } = req.params;
 
-        const eventExists = await subeventRepo.findEvent(eventId as unknown as mongoose.Types.ObjectId);
+        const eventExists = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
         if (!eventExists) return res.status(404).json({ success: false, message: "Event not found" });
 
         try {

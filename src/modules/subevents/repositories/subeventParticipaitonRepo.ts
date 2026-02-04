@@ -12,7 +12,7 @@ const subeventParticipationRepo = {
         return await SubeventParticipation.aggregate([
             {
                 $match: {
-                    userId: userId
+                    userId: new mongoose.Types.ObjectId(userId)
                 }
             },
             {
@@ -37,7 +37,7 @@ const subeventParticipationRepo = {
         return await SubeventParticipation.aggregate([
             {
                 $match: {
-                    userId: userId
+                    userId: new mongoose.Types.ObjectId(userId)
                 }
             },
             {
@@ -58,7 +58,7 @@ const subeventParticipationRepo = {
             },
             {
                 $match: {
-                    eventId: eventId
+                    eventId: new mongoose.Types.ObjectId(eventId)
                 }
             }
         ]);

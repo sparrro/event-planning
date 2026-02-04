@@ -9,7 +9,7 @@ const subeventRepo = {
     getByUser: async (userId: mongoose.Types.ObjectId) => { //delendum
         return await Subevent.find({ participants: userId });
     },
-    findEvent: async (eventId: mongoose.Types.ObjectId) => { //är inte det fel med eventId istället för subeventId?
+    findEvent: async (eventId: mongoose.Types.ObjectId) => { //delendum
         return await Subevent.findById(eventId);
     },
     findManyEvents: async (subeventIds: mongoose.Types.ObjectId[]) => {

@@ -60,6 +60,8 @@ const eventService = {
 
     leave: async (eventId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => { //ta bort från tabellen
         try {
+            const userIsOrganiser = await eventRepo.findEventWithFounder(userId, eventId);
+            if (userIsOrganiser) return { success: false, message: "Cannot leave event you're the organiser of" };
             await eventParticipationRepo.deleteOne(userId, eventId);
             return { success: true, message: "User removed from event"};
         } catch (error) {
