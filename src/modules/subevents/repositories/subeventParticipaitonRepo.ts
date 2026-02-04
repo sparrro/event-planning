@@ -33,6 +33,36 @@ const subeventParticipationRepo = {
             }
         ]);
     },
+    getSubeventByEventAndUser: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
+        return await SubeventParticipation.aggregate([
+            {
+                $match: {
+                    userId: userId
+                }
+            },
+            {
+                $lookup: {
+                    from: "subevents",
+                    localField: "subeventId",
+                    foreignField: "_id",
+                    as: "subevent"
+                }
+            },
+            {
+                $unwind: "$subevent"
+            },
+            {
+                $replaceRoot: {
+                    newRoot: "$subevent"
+                }
+            },
+            {
+                $match: {
+                    eventId: eventId
+                }
+            }
+        ]);
+    }
 };
 
 export default subeventParticipationRepo;

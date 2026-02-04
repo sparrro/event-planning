@@ -32,7 +32,10 @@ const subeventService = {
     },
 
     getbyEventAndUser: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
-        try {} catch (error) {
+        try {
+            const subevents = await subeventParticipationRepo.getSubeventByEventAndUser(userId, eventId);
+            return { success: true, message: "Subevents retrieved", data: { subevents } };
+        } catch (error) {
             if (error instanceof Error) {
                 return { success: false, message: error.message };
             } else return { success: false, message: "Unknown error" };
