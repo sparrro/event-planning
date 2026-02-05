@@ -9,6 +9,7 @@ import subeventCreationInputData from "../../../types/subeventInputData";
 import mongoose from "mongoose";
 import subeventRepo from "../repositories/subeventRepo";
 import eventParticipationRepo from "../../events/repositories/eventParticipationRepo";
+import subeventParticipationRepo from "../repositories/subeventParticipaitonRepo";
 
 const subEventController = {
 
@@ -42,7 +43,7 @@ const subEventController = {
             } else return res.status(400).json(result);
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
-        }
+        };
     },
 
     getByUser: async (req: Request, res: Response) => {
@@ -56,7 +57,7 @@ const subEventController = {
             } else return res.status(400).json(result);
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
-        }
+        };
     },
 
     getByEventAndUser: async (req: Request, res: Response) => {
@@ -74,8 +75,26 @@ const subEventController = {
             } else return res.status(400).json(result);
         } catch (error) {
             return res.status(500).json({ success: false, message: "Server error" });
-        }
-    }
+        };
+    },
+
+    join: async (req: Request, res: Response) => {
+
+        const { user } = req;
+        const { subeventId } = req.params;
+
+        const subeventExists = await subeventRepo.findSubevent(subeventId as unknown as mongoose.Types.ObjectId);
+        if (!subeventExists) return res.status(404).json({ success: false, message: "Subevent not found" });
+
+        try {
+            const result = await subeventService.signUp(user!.id, subeventId as unknown as mongoose.Types.ObjectId);
+            if (result.success) {
+                return res.status(200).json(result);
+            } else return res.status(400).json(result);
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Server error" });
+        };
+    },
 
 };
 

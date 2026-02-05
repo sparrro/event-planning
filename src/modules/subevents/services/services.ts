@@ -42,6 +42,19 @@ const subeventService = {
         };
     },
 
+    signUp: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
+        try {
+            const alreadySignedUp = await subeventParticipationRepo.findParticipation(userId, subeventId);
+            if (alreadySignedUp) return { success: false, message: "User already signed up to subevent" };
+            const participation = await subeventParticipationRepo.add(userId, subeventId);
+            return { success: true, message: "Signed up succesfully", data: { participation } }
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    }
+
 };
 
 export default subeventService;

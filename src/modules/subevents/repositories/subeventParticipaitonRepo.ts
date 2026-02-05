@@ -62,7 +62,11 @@ const subeventParticipationRepo = {
                 }
             }
         ]);
-    }
+    },
+
+    findParticipation: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
+        return await SubeventParticipation.find({ userId, subeventId });
+    },
 };
 
 export default subeventParticipationRepo;

@@ -15,6 +15,9 @@ const subeventRepo = {
     findManyEvents: async (subeventIds: mongoose.Types.ObjectId[]) => {
         return await Subevent.find({ _id: { $in: subeventIds } });
     },
+    findSubevent: async (subeventId: mongoose.Types.ObjectId) => {
+        return await Subevent.findById(subeventId);
+    }
 };
 
 export default subeventRepo;

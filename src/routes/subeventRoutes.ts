@@ -20,6 +20,12 @@ subeventRoutes.get(
     "/:eventId",
     authenticate,
     subEventController.getByEventAndUser
+);
+
+subeventRoutes.put(
+    "/:subeventId/join",
+    authenticate,
+    subEventController.join
 )
 
 export default subeventRoutes;
