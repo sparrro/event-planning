@@ -26,6 +26,12 @@ subeventRoutes.put(
     "/:subeventId/join",
     authenticate,
     subEventController.join
+);
+
+subeventRoutes.delete(
+    "/:subeventId",
+    authenticate,
+    subEventController.delete
 )
 
 export default subeventRoutes;

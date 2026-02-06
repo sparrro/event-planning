@@ -1,6 +1,6 @@
 import Subevent from "../models/subeventModel";
 import subeventType from "../../../types/modelTypes/subevent";
-import mongoose from "mongoose";
+import mongoose, { deleteModel } from "mongoose";
 
 const subeventRepo = {
     add: async (subeventData: subeventType) => {
@@ -17,7 +17,10 @@ const subeventRepo = {
     },
     findSubevent: async (subeventId: mongoose.Types.ObjectId) => {
         return await Subevent.findById(subeventId);
-    }
+    },
+    delete: async (subeventId: mongoose.Types.ObjectId) => {
+        return await Subevent.findByIdAndDelete(subeventId);
+    },
 };
 
 export default subeventRepo;

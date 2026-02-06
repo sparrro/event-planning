@@ -53,7 +53,19 @@ const subeventService = {
                 return { success: false, message: error.message };
             } else return { success: false, message: "Unknown error" };
         };
-    }
+    },
+
+    delete: async (subeventId: mongoose.Types.ObjectId) => {
+        try {
+            const deletedSubevent = await subeventRepo.delete(subeventId);
+            await subeventParticipationRepo.deleteAllParticipationsBySubevent(subeventId);
+            return { success: true, message: "Subevent deleted", data: { deletedSubevent } }
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
 
 };
 
