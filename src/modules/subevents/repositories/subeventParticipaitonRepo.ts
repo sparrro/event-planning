@@ -71,6 +71,10 @@ const subeventParticipationRepo = {
     deleteAllParticipationsBySubevent: async (subeventId: mongoose.Types.ObjectId) => {
         return await SubeventParticipation.deleteMany({ subeventId });
     },
+
+    deleteOneParticipation: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
+        return await SubeventParticipation.deleteOne({ userId, subeventId });
+    },
 };
 
 export default subeventParticipationRepo;

@@ -67,6 +67,17 @@ const subeventService = {
         };
     },
 
+    leave: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
+        try {
+            await subeventParticipationRepo.deleteOneParticipation(userId, subeventId);
+            return { success: true, message: "Participation cancelled" };
+        } catch (error) {
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            } else return { success: false, message: "Unknown error" };
+        };
+    },
+
 };
 
 export default subeventService;

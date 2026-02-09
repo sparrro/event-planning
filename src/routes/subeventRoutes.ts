@@ -28,10 +28,16 @@ subeventRoutes.put(
     subEventController.join
 );
 
+subeventRoutes.put(
+    "/:subeventId/leave",
+    authenticate,
+    subEventController.leave
+);
+
 subeventRoutes.delete(
     "/:subeventId",
     authenticate,
     subEventController.delete
-)
+);
 
 export default subeventRoutes;
