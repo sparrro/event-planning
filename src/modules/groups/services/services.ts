@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import userGroupRepo from "../repositories/userGroupRepo";
 import userGroupType from "../../../types/modelTypes/userGroup";
+import userAccountRepo from "../../userAccount/repositories/userAccountRepo";
+import { ResourceNotFoundError } from "../../../utils/errors";
 
 
 const groupService = {
@@ -84,15 +86,14 @@ const groupService = {
         }
     },
 
-    getGroupsByMembership: async (id: mongoose.Types.ObjectId) => {
-        try {
-            const groups = await userGroupRepo.getGroupsByMembership(id);
-            return { success: true, message: "Groups got", data: { groups } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
+    getGroupsByMembership: async (userId: mongoose.Types.ObjectId) => {
+        const user = await userAccountRepo.findUserById(userId);
+        if (!user) {
+            throw new ResourceNotFoundError(userId);
         }
+        const groups = await userGroupRepo.getGroupsByMembership(userId);
+        return { success: true, message: "Groups got", data: { groups } };
+        
     }
 
 };

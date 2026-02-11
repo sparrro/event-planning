@@ -1,0 +1,3 @@
+make error types
+make services return those error types
+make middleware to interpret error types into http codes

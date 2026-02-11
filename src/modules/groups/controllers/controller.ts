@@ -4,6 +4,7 @@ import {
     Response
 } from "express";
 import mongoose from "mongoose";
+import { interpretErrorsHttp } from "../../../utils/errorsToHttp";
 
 const groupController = {
 
@@ -84,11 +85,10 @@ const groupController = {
 
         try {
             const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
-            if (result.success) {
-                return res.status(200).json(result);
-            } else return res.status(404).json(result);
+            return res.status(200).json(result);
         } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
+            const { status, body } = interpretErrorsHttp(error);
+            return res.status(status).json(body);
         }
     },
 
