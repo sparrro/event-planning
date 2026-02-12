@@ -1,3 +1,6 @@
+import {
+    UserAlreadySignedUpToSubeventError
+} from "../../../errors/errors";
 import subeventType from "../../../types/modelTypes/subevent";
 import subeventCreationInputData from "../../../types/subeventInputData";
 import eventRepo from "../../events/repositories/eventRepo";
@@ -8,74 +11,40 @@ import mongoose from "mongoose";
 const subeventService = {
 
     add: async (input: subeventCreationInputData) => {
-        try {
-            const subeventData: subeventType = { ...input }
-            const subevent = await subeventRepo.add(subeventData);
-            await subeventParticipationRepo.add(input.userId, subevent._id);
-            return { success: true, message: "Subevent added", data: { subevent } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        const subeventData: subeventType = { ...input }
+        const subevent = await subeventRepo.add(subeventData);
+        await subeventParticipationRepo.add(input.userId, subevent._id);
+        return { success: true, message: "Subevent added", data: { subevent } };
     },
 
     getByUser: async (userId: mongoose.Types.ObjectId) => {
-        try {
-            const subevents = await subeventParticipationRepo.getSubeventsByParticipation(userId);
-            return { success: true, message: "Subevents retrieved", data: { subevents } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        const subevents = await subeventParticipationRepo.getSubeventsByParticipation(userId);
+        return { success: true, message: "Subevents retrieved", data: { subevents } };
     },
 
     getbyEventAndUser: async (userId: mongoose.Types.ObjectId, eventId: mongoose.Types.ObjectId) => {
-        try {
-            const subevents = await subeventParticipationRepo.getSubeventByEventAndUser(userId, eventId);
-            return { success: true, message: "Subevents retrieved", data: { subevents } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        };
+        const subevents = await subeventParticipationRepo.getSubeventByEventAndUser(userId, eventId);
+        return { success: true, message: "Subevents retrieved", data: { subevents } };
     },
 
     signUp: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
-        try {
-            const alreadySignedUp = await subeventParticipationRepo.findParticipation(userId, subeventId);
-            if (alreadySignedUp) return { success: false, message: "User already signed up to subevent" };
-            const participation = await subeventParticipationRepo.add(userId, subeventId);
-            return { success: true, message: "Signed up succesfully", data: { participation } }
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
+        const alreadySignedUp = await subeventParticipationRepo.findParticipation(userId, subeventId);
+        if (alreadySignedUp) {
+            throw new UserAlreadySignedUpToSubeventError(subeventId);
         };
+        const participation = await subeventParticipationRepo.add(userId, subeventId);
+        return { success: true, message: "Signed up succesfully", data: { participation } }
     },
 
     delete: async (subeventId: mongoose.Types.ObjectId) => {
-        try {
-            const deletedSubevent = await subeventRepo.delete(subeventId);
-            await subeventParticipationRepo.deleteAllParticipationsBySubevent(subeventId);
-            return { success: true, message: "Subevent deleted", data: { deletedSubevent } }
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        };
+        const deletedSubevent = await subeventRepo.delete(subeventId);
+        await subeventParticipationRepo.deleteAllParticipationsBySubevent(subeventId);
+        return { success: true, message: "Subevent deleted", data: { deletedSubevent } }
     },
 
     leave: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
-        try {
-            await subeventParticipationRepo.deleteOneParticipation(userId, subeventId);
-            return { success: true, message: "Participation cancelled" };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        };
+        await subeventParticipationRepo.deleteOneParticipation(userId, subeventId);
+        return { success: true, message: "Participation cancelled" };
     },
 
 };

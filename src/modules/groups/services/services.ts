@@ -2,98 +2,78 @@ import mongoose from "mongoose";
 import userGroupRepo from "../repositories/userGroupRepo";
 import userGroupType from "../../../types/modelTypes/userGroup";
 import userAccountRepo from "../../userAccount/repositories/userAccountRepo";
-import { ResourceNotFoundError } from "../../../utils/errors";
+import { 
+    GroupNameAlreadyTakenError,
+    GroupNotFoundError,
+    UserAlreadyInGroupError,
+    UserIsFounderError,
+    UserNotFoundError
+} from "../../../errors/errors";
 
 
 const groupService = {
 
     createGroup: async (groupData: { creatorId: mongoose.Types.ObjectId, name: string }) => {
-        try {
-            const { creatorId, name } = groupData;
-            //kolla om gruppnamnet är upptaget
-            const groupNameTaken = await userGroupRepo.findGroupByName(name);
-            if (groupNameTaken) return { success: false, message: "Group name already in use" };
-            
-            //formattera datan
-            const groupCreationInput: userGroupType = {
-                creator: creatorId,
-                members: [creatorId],
-                startedAt: Date.now(),
-                name: name
-            };
-            
-            //skapa gruppen
-            const group = await userGroupRepo.createGroup(groupCreationInput);
+        const { creatorId, name } = groupData;
+        //kolla om gruppnamnet är upptaget
+        const groupNameTaken = await userGroupRepo.findGroupByName(name);
+        if (groupNameTaken) {
+            throw new GroupNameAlreadyTakenError();
+        };
+        
+        //formattera datan
+        const groupCreationInput: userGroupType = {
+            creator: creatorId,
+            members: [creatorId],
+            startedAt: Date.now(),
+            name: name
+        };
+        
+        //skapa gruppen
+        const group = await userGroupRepo.createGroup(groupCreationInput);
 
-            //skicka svar
-            return { success: true, message: "Group created", data: { group } };
-
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unkown error" };
-        }
+        //skicka svar
+        return { success: true, message: "Group created", data: { group } };
     },
 
     joinGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-        try {
-            if (await userGroupRepo.findUserInGroup(groupId, userId)) return { success: false, message: "User already in group" };
-
-            const group = await userGroupRepo.addUserToGroup(groupId, userId);
-            return { success: true, message: "User added to group", data: { group } };
-
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        if (await userGroupRepo.findUserInGroup(groupId, userId)) {
+            throw new UserAlreadyInGroupError(groupId);
+        };
+        const group = await userGroupRepo.addUserToGroup(groupId, userId);
+        return { success: true, message: "User added to group", data: { group } };
     },
 
     leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-        try {
-            const checkGroup = await userGroupRepo.findGroup(groupId);
-            if (checkGroup?.creator == userId) {
-                return { success: false, message: "Founder of a group may not leave" }
-            };
-            const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
-            return { success: true, message: "User removed from group", data: { group } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        const checkGroup = await userGroupRepo.findGroup(groupId);
+        if (!checkGroup) {
+            throw new GroupNotFoundError(groupId);
+        };
+        if (checkGroup.creator == userId) {
+            throw new UserIsFounderError(groupId);
+        };
+        const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
+        return { success: true, message: "User removed from group", data: { group } };
     },
 
     getAllGroups: async () => {
-        try {
-            const groups = await userGroupRepo.getAllGroups();
-            return { success: true, message: "Groups got", data: { groups } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        const groups = await userGroupRepo.getAllGroups();
+        return { success: true, message: "Groups got", data: { groups } };
+        
     },
 
     getGroupsByFounder: async (id: mongoose.Types.ObjectId) => {
-        try {
-            const groups = await userGroupRepo.getGroupsByFounder(id);
-            return { success: true, message: "Groups got", data: { groups } };
-        } catch (error) {
-            if (error instanceof Error) {
-                return { success: false, message: error.message };
-            } else return { success: false, message: "Unknown error" };
-        }
+        const groups = await userGroupRepo.getGroupsByFounder(id);
+        return { success: true, message: "Groups got", data: { groups } };
     },
 
     getGroupsByMembership: async (userId: mongoose.Types.ObjectId) => {
         const user = await userAccountRepo.findUserById(userId);
         if (!user) {
-            throw new ResourceNotFoundError(userId);
+            throw new UserNotFoundError(userId);
         }
         const groups = await userGroupRepo.getGroupsByMembership(userId);
         return { success: true, message: "Groups got", data: { groups } };
-        
     }
 
 };

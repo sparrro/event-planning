@@ -83,13 +83,8 @@ const groupController = {
     getGroupsByMembership: async (req: Request, res: Response) => {
         const { userId } = req.params;
 
-        try {
-            const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
-            return res.status(200).json(result);
-        } catch (error) {
-            const { status, body } = interpretErrorsHttp(error);
-            return res.status(status).json(body);
-        }
+        const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
+        return res.status(200).json(result);
     },
 
 };

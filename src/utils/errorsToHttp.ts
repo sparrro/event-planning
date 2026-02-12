@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from "./errors";
+import { ResourceNotFoundError } from "../errors/errors";
 
 export const interpretErrorsHttp = (err: unknown) => {
     if (err instanceof ResourceNotFoundError) {
