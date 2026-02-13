@@ -17,7 +17,32 @@ export class UserNotFoundError extends Error {
     };
 };
 
-//account errors
+export class EventNotFoundError extends Error {
+    public readonly name = "eventNotFound";
+
+    constructor(eventId: mongoose.Types.ObjectId) {
+        super(`Event ${eventId} not found`);
+    };
+};
+
+//controller errors
+export class JoiValidationError extends Error {
+    public readonly name = "joiValidation";
+
+    constructor(msg: string) {
+        super(msg);
+    };
+};
+
+export class ObjectIdValidationError extends Error {
+    public readonly name = "objectIdValidation";
+
+    constructor(idType: string, id: string) {
+        super(`${id} is not a valid ${idType} objectId`);
+    };
+};
+
+//account service errors
 export class NoUsernameOrEmailProvidedError extends Error {
     public readonly name = "noUsernameOrEmailProvided";
 
@@ -106,7 +131,7 @@ export class FailedToChangePasswordError extends Error {
     };
 };
 
-//event errors
+//event service errors
 export class UserAlreadySignedUpToEventError extends Error {
     public readonly name = "userAlreadySignedUpToEvent";
 
@@ -139,7 +164,7 @@ export class UserIsNotOrganiserError extends Error {
     };
 };
 
-//subevent errors
+//subevent service errors
 export class UserAlreadySignedUpToSubeventError extends Error {
     public readonly name = "userAlreadySignedUpToSubevent";
 
@@ -148,7 +173,7 @@ export class UserAlreadySignedUpToSubeventError extends Error {
     };
 };
 
-//group errors
+//group service errors
 export class UserNotInGroupError extends Error {
     public readonly name = "userNotInGroup";
 

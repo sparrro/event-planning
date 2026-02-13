@@ -4,10 +4,9 @@ import {
     Response
 } from "express";
 import mongoose from "mongoose";
-import eventType from "../../../types/modelTypes/event";
 import Joi from "joi";
 import eventCreationInputData from "../../../types/eventInputData";
-import eventRepo from "../repositories/eventRepo";
+import * as Errors from "../../../errors/errors";
 
 const eventController = {
 
@@ -24,21 +23,17 @@ const eventController = {
             groupId: Joi.string()
         });
         const { error } = eventSchema.validate(data);
-        if (error) return res.status(400).json({ success: false, message: error.message });
+        if (error) {
+            throw new Errors.JoiValidationError(error.message);
+        };
 
         const inputData: eventCreationInputData = {
             ...data,
             creatorId: user!.id,
         }
 
-        try {
-            const result = await eventService.create(inputData);
-            if (result.success) {
-                return res.status(201).json(result);
-            } else return res.status(400).json(result);
-        } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
-        };
+        const result = await eventService.create(inputData);
+        return res.status(201).json(result);
 
     },
 
@@ -46,18 +41,15 @@ const eventController = {
 
         const { user } = req;
         const { eventId } = req.params;
+        
+        const validEventId = mongoose.Types.ObjectId.isValid(eventId);
+        if (!validEventId) {
+            throw new Errors.ObjectIdValidationError("event", eventId);
+        };
 
-        const event = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
-        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
-
-        try {
-            const result = await eventService.delete(eventId as unknown as mongoose.Types.ObjectId, user!.id);
-            if (result.success) {
-                return res.status(200).json(result);
-            } else return res.status(400).json(result);
-        } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
-        }
+        const result = await eventService.delete(eventId as unknown as mongoose.Types.ObjectId, user!.id);
+        return res.status(200).json(result);
+        
     },
 
     joinAsGroup: async (req: Request, res: Response) => {
@@ -66,17 +58,17 @@ const eventController = {
         const { eventId } = req.params;
         const { groupId } = req.body;
 
-        const event = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
-        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
-
-        try {
-            const result = await eventService.joinAsGroup(groupId, eventId as unknown as mongoose.Types.ObjectId, user!.id);
-            if (result.success) {
-                return res.status(200).json(result);
-            } else return res.status(400).json(result);
-        } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
+        const validEventId = mongoose.Types.ObjectId.isValid(eventId);
+        const validGroupId = mongoose.Types.ObjectId.isValid(groupId);
+        if (!validEventId) {
+            throw new Errors.ObjectIdValidationError("event", eventId);
         };
+        if (!validGroupId) {
+            throw new Errors.ObjectIdValidationError("group", groupId);
+        };
+
+        const result = await eventService.joinAsGroup(groupId, eventId as unknown as mongoose.Types.ObjectId, user!.id);
+        return res.status(200).json(result);
 
     },
 
@@ -85,17 +77,14 @@ const eventController = {
         const { user } = req;
         const { eventId } = req.params;
 
-        const event = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
-        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
-
-        try {
-            const result = await eventService.joinAsIndividual(user!.id, eventId as unknown as mongoose.Types.ObjectId);
-            if (result.success) {
-                return res.status(200).json(result);
-            } else return res.status(400).json(result);
-        } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
+        const validEventId = mongoose.Types.ObjectId.isValid(eventId);
+        if (!validEventId) {
+            throw new Errors.ObjectIdValidationError("event", eventId);
         };
+
+        const result = await eventService.joinAsIndividual(user!.id, eventId as unknown as mongoose.Types.ObjectId);
+        return res.status(200).json(result);
+
     },
 
     leave: async (req: Request, res: Response) => {
@@ -103,17 +92,14 @@ const eventController = {
         const { user } = req;
         const { eventId } = req.params;
 
-        const event = await eventRepo.find(eventId as unknown as mongoose.Types.ObjectId);
-        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
+        const validEventId = mongoose.Types.ObjectId.isValid(eventId);
+        if (!validEventId) {
+            throw new Errors.ObjectIdValidationError("event", eventId);
+        };
 
-        try {
-            const result = await eventService.leave(eventId as unknown as mongoose.Types.ObjectId, user!.id);
-            if (result.success) {
-                return res.status(200).json(result);
-            } else return res.status(400).json(result);
-        } catch (error) {
-            return res.status(500).json({ success: false, message: "Server error" });
-        }
+        const result = await eventService.leave(eventId as unknown as mongoose.Types.ObjectId, user!.id);
+        return res.status(200).json(result);
+
     },
 
 };

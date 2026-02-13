@@ -2,13 +2,7 @@ import mongoose from "mongoose";
 import userGroupRepo from "../repositories/userGroupRepo";
 import userGroupType from "../../../types/modelTypes/userGroup";
 import userAccountRepo from "../../userAccount/repositories/userAccountRepo";
-import { 
-    GroupNameAlreadyTakenError,
-    GroupNotFoundError,
-    UserAlreadyInGroupError,
-    UserIsFounderError,
-    UserNotFoundError
-} from "../../../errors/errors";
+import * as Errors from "../../../errors/errors";
 
 
 const groupService = {
@@ -18,7 +12,7 @@ const groupService = {
         //kolla om gruppnamnet är upptaget
         const groupNameTaken = await userGroupRepo.findGroupByName(name);
         if (groupNameTaken) {
-            throw new GroupNameAlreadyTakenError();
+            throw new Errors.GroupNameAlreadyTakenError();
         };
         
         //formattera datan
@@ -38,7 +32,7 @@ const groupService = {
 
     joinGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         if (await userGroupRepo.findUserInGroup(groupId, userId)) {
-            throw new UserAlreadyInGroupError(groupId);
+            throw new Errors.UserAlreadyInGroupError(groupId);
         };
         const group = await userGroupRepo.addUserToGroup(groupId, userId);
         return { success: true, message: "User added to group", data: { group } };
@@ -47,10 +41,10 @@ const groupService = {
     leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
         const checkGroup = await userGroupRepo.findGroup(groupId);
         if (!checkGroup) {
-            throw new GroupNotFoundError(groupId);
+            throw new Errors.GroupNotFoundError(groupId);
         };
         if (checkGroup.creator == userId) {
-            throw new UserIsFounderError(groupId);
+            throw new Errors.UserIsFounderError(groupId);
         };
         const group = await userGroupRepo.removeUserFromGroup(groupId, userId);
         return { success: true, message: "User removed from group", data: { group } };
@@ -70,7 +64,7 @@ const groupService = {
     getGroupsByMembership: async (userId: mongoose.Types.ObjectId) => {
         const user = await userAccountRepo.findUserById(userId);
         if (!user) {
-            throw new UserNotFoundError(userId);
+            throw new Errors.UserNotFoundError(userId);
         }
         const groups = await userGroupRepo.getGroupsByMembership(userId);
         return { success: true, message: "Groups got", data: { groups } };

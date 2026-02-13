@@ -1,6 +1,4 @@
-import {
-    UserAlreadySignedUpToSubeventError
-} from "../../../errors/errors";
+import * as Errors from "../../../errors/errors";
 import subeventType from "../../../types/modelTypes/subevent";
 import subeventCreationInputData from "../../../types/subeventInputData";
 import eventRepo from "../../events/repositories/eventRepo";
@@ -30,7 +28,7 @@ const subeventService = {
     signUp: async (userId: mongoose.Types.ObjectId, subeventId: mongoose.Types.ObjectId) => {
         const alreadySignedUp = await subeventParticipationRepo.findParticipation(userId, subeventId);
         if (alreadySignedUp) {
-            throw new UserAlreadySignedUpToSubeventError(subeventId);
+            throw new Errors.UserAlreadySignedUpToSubeventError(subeventId);
         };
         const participation = await subeventParticipationRepo.add(userId, subeventId);
         return { success: true, message: "Signed up succesfully", data: { participation } }

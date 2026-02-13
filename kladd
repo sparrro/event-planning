@@ -1,5 +1,8 @@
-make services throw errors
-make error classes
-trim error handling from controllers
-move errors from controllers to services where needed
+make services throw errors - done
+make error classes - in progress
+trim error handling from controllers - in progress
+move errors from controllers to services where needed - in progress
 add necessary error to http conversions
+
+malformed input = 400 = controllers
+unauthorised = 401 = auth middleware

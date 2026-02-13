@@ -4,7 +4,7 @@ import {
     Response
 } from "express";
 import mongoose from "mongoose";
-import { interpretErrorsHttp } from "../../../utils/errorsToHttp";
+import * as Errors from "../../../errors/errors";
 
 const groupController = {
 

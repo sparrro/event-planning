@@ -17,26 +17,13 @@ import jwtPayload from "../../../types/jwtPayload";
 import loginCredentials from "../../../types/loginCredentials";
 import mongoose from "mongoose";
 import signupData from "../../../types/signupData";
-import {
-    EmailAlreadyInUseError,
-    FailedToChangePasswordError,
-    FailedToDeleteRefreshTokenError,
-    FailedToSendPasswordResetEmailError,
-    FailedToSendVerificationEmailError,
-    FailedToVerifyAccountError,
-    IncorrectLoginError,
-    NoTokenProvidedError,
-    NoUsernameOrEmailProvidedError,
-    TokenExpiredError,
-    UsernameAlreadyInUseError,
-    UserNotFoundError
-} from "../../../errors/errors";
+import * as Errors from "../../../errors/errors";
 
 const userAccountService = {
     logIn: async (credentials: loginCredentials) => {
         const { username, email, password, keepMeLoggedIn } = credentials;
         if (!username && !email) {
-            throw new NoUsernameOrEmailProvidedError();
+            throw new Errors.NoUsernameOrEmailProvidedError();
         };
 
         let account;
@@ -44,12 +31,12 @@ const userAccountService = {
             account = await userAccountRepo.findUserByName(username);
         } else account = await userAccountRepo.findUserByEmail(email!);
         if (!account) {
-            throw new IncorrectLoginError();
+            throw new Errors.IncorrectLoginError();
         };
 
         const correctPassword = await bcrypt.compare(password, account.hashedPassword);
         if (!correctPassword) {
-            throw new IncorrectLoginError();
+            throw new Errors.IncorrectLoginError();
         };
 
         const payload = {
@@ -71,7 +58,7 @@ const userAccountService = {
             await account.save();
             return { success: true, message: "Logged out succesfully" }
         } else {
-            throw new FailedToDeleteRefreshTokenError();
+            throw new Errors.FailedToDeleteRefreshTokenError();
         };
     },
     signUp: async (userData: signupData) => {
@@ -79,11 +66,11 @@ const userAccountService = {
         const usernameTaken = await userAccountRepo.findUserByName(username);
         const emailInUse = await userAccountRepo.findUserByEmail(email);
         if (emailInUse) {
-            throw new EmailAlreadyInUseError();
+            throw new Errors.EmailAlreadyInUseError();
         };
 
         if (usernameTaken) {
-            throw new UsernameAlreadyInUseError();
+            throw new Errors.UsernameAlreadyInUseError();
         };
 
         const hashedPassword = await bcrypt.hash(password, SALTROUNDS);
@@ -105,13 +92,13 @@ const userAccountService = {
         if (emailResult.success) {
             return { success: true, message: "Account created", data: { account: result } }
         } else {
-            throw new FailedToSendVerificationEmailError();
+            throw new Errors.FailedToSendVerificationEmailError();
         };
     },
     verify: async (token: string) => {
         const tokenResult = await verificationTokenRepo.findToken(token);
         if (!tokenResult) {
-            throw new NoTokenProvidedError();
+            throw new Errors.NoTokenProvidedError();
         };
         const now = Date.now();
         if (now > Number(tokenResult.expiresAt)) {
@@ -127,12 +114,12 @@ const userAccountService = {
                 await sendVerificationMail(accountResult.email, accountResult.username, newToken.token);
                 return { success: true, message: "Token expired, a new verification email has been sent" };
             } else {
-                throw new TokenExpiredError();
+                throw new Errors.TokenExpiredError();
             };
         }
         const accountResult = await userAccountRepo.verifyUser(tokenResult.userId);
         if (!accountResult) {
-            throw new FailedToVerifyAccountError();
+            throw new Errors.FailedToVerifyAccountError();
         };
         await verificationTokenRepo.deleteToken(token);
         return { success: true, message: "Account verified", data: { account: accountResult } };
@@ -140,12 +127,12 @@ const userAccountService = {
     refresh: async (token: string) => {
         const decoded: jwtPayload | undefined = verifyRefreshToken(token);
         if (!decoded) {
-            throw new NoTokenProvidedError();
+            throw new Errors.NoTokenProvidedError();
         };
 
         const account = await userAccountRepo.findUserById(decoded.id);
         if (!account || account.refreshToken !== token) {
-            throw new NoTokenProvidedError();
+            throw new Errors.NoTokenProvidedError();
         };
 
         const newAccessToken = giveAccessToken({ id: account._id, username: account.username });
@@ -161,7 +148,7 @@ const userAccountService = {
     forgotPassword: async (email: string) => {
         const account = await userAccountRepo.findUserByEmail(email);
         if (!account) {
-            throw new UserNotFoundError();
+            throw new Errors.UserNotFoundError();
         };
 
         const token = crypto.randomBytes(32).toString("hex");
@@ -177,17 +164,17 @@ const userAccountService = {
         if (emailResult.success) {
             return { success: true, message: "Email sent" };
         } else {
-            throw new FailedToSendPasswordResetEmailError();
+            throw new Errors.FailedToSendPasswordResetEmailError();
         };
     },
     resetPassword: async (token: string, newPassword: string) => {
             const tokenResult = await resetTokenRepo.findToken(token);
             if (!tokenResult) {
-                throw new NoTokenProvidedError();
+                throw new Errors.NoTokenProvidedError();
             };
             const user = await userAccountRepo.findUserById(tokenResult.userId);
             if (!user) {
-                throw new NoTokenProvidedError();
+                throw new Errors.NoTokenProvidedError();
             };
 
             const hashedPassword = await bcrypt.hash(newPassword, SALTROUNDS);
@@ -196,7 +183,7 @@ const userAccountService = {
             if (changeResult && changeResult.hashedPassword === hashedPassword) {
                 return { success: true, message: "Password changed" };
             } else {
-                throw new FailedToChangePasswordError();
+                throw new Errors.FailedToChangePasswordError();
             };
     },
 }
