@@ -51,7 +51,7 @@ const userAccountService = {
         }
         return { success: true, message: "Logged in successfully", data: { accessToken, refreshToken } }
     },
-    logOut: async (userId: mongoose.Types.ObjectId) => {
+    logOut: async (userId: mongoose.Types.ObjectId) => { //förmodligen delendum
         const account = await userAccountRepo.findUserById(userId);
         if (account) {
             account.refreshToken = undefined;

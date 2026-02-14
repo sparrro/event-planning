@@ -25,6 +25,14 @@ export class EventNotFoundError extends Error {
     };
 };
 
+export class SubeventNotFoundError extends Error {
+    public readonly name = "subeventNotFound";
+
+    constructor(subeventId: mongoose.Types.ObjectId) {
+        super(`Subevent ${subeventId} not found`);
+    };
+};
+
 //controller errors
 export class JoiValidationError extends Error {
     public readonly name = "joiValidation";
@@ -37,8 +45,64 @@ export class JoiValidationError extends Error {
 export class ObjectIdValidationError extends Error {
     public readonly name = "objectIdValidation";
 
-    constructor(idType: string, id: string) {
+    constructor(idType: ("group" | "event" | "subevent" | "user"), id: string) {
         super(`${id} is not a valid ${idType} objectId`);
+    };
+};
+
+export class MissingObjectIdError extends Error {
+    public readonly name = "missingObjectId";
+
+    constructor(idType: string) {
+        super(`Missing objectId for ${idType}`);
+    };
+};
+
+export class MissingGroupNameError extends Error {
+    public readonly name = "missingGroupName";
+
+    constructor() {
+        super("Missing group name");
+    };
+};
+
+export class MissingEmailError extends Error {
+    public readonly name = "missingEmail";
+
+    constructor() {
+        super("Missing email");
+    };
+};
+
+export class MissingVerificationTokenError extends Error {
+    public readonly name = "missingVerificationToken";
+
+    constructor() {
+        super("Missing verification token");
+    };
+};
+
+export class MissingRefreshTokenError extends Error {
+    public readonly name = "missingRefreshTokenError";
+
+    constructor() {
+        super("Missing refresh token");
+    };
+};
+
+export class MissingPasswordResetTokenError extends Error {
+    public readonly name = "missingPasswordResetToken";
+
+    constructor() {
+        super("Missing password reset token");
+    };
+};
+
+export class MissingNewPasswordError extends Error {
+    public readonly name = "missingNewPassword";
+
+    constructor() {
+        super("Missing new password");
     };
 };
 
@@ -131,7 +195,16 @@ export class FailedToChangePasswordError extends Error {
     };
 };
 
+
 //event service errors
+export class UserIsNotParticipantInEventError extends Error {
+    public readonly name = "userIsNotParticipantInEvent";
+
+    constructor(eventId: mongoose.Types.ObjectId) {
+        super(`User is not signed up to event ${eventId}`);
+    };
+};
+
 export class UserAlreadySignedUpToEventError extends Error {
     public readonly name = "userAlreadySignedUpToEvent";
 
