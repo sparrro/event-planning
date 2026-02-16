@@ -74,6 +74,14 @@ export class MissingEmailError extends Error {
     };
 };
 
+export class InvalidEmailFormatError extends Error {
+    public readonly name = "invalidEmailFormat";
+
+    constructor() {
+        super("Invalid email format");
+    };
+};
+
 export class MissingVerificationTokenError extends Error {
     public readonly name = "missingVerificationToken";
 

@@ -24,9 +24,6 @@ const groupController = {
         
         const { user } = req;
         const { groupId } = req.params;
-        if (!groupId) {
-            throw new Errors.MissingObjectIdError("group");
-        };
         const validGroupId = mongoose.Types.ObjectId.isValid(groupId);
         if (!validGroupId) {
             throw new Errors.ObjectIdValidationError("group", groupId);
@@ -40,9 +37,6 @@ const groupController = {
         
         const { user } = req;
         const { groupId } = req.params;
-        if (!groupId) {
-            throw new Errors.MissingObjectIdError("group");
-        };
         const validGroupId = mongoose.Types.ObjectId.isValid(groupId);
         if (!validGroupId) {
             throw new Errors.ObjectIdValidationError("group", groupId);
@@ -65,6 +59,10 @@ const groupController = {
 
     getGroupsByMembership: async (req: Request, res: Response) => {
         const { userId } = req.params;
+        const validUserId = mongoose.Types.ObjectId.isValid(userId);
+        if (!validUserId) {
+            throw new Errors.ObjectIdValidationError("user", userId);
+        };
 
         const result = await groupService.getGroupsByMembership(userId as unknown as mongoose.Types.ObjectId);
         return res.status(200).json(result);

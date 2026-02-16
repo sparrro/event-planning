@@ -6,24 +6,31 @@ import {
 } from "express";
 import mongoose from "mongoose";
 import * as Errors from "../../../errors/errors";
+import { validate } from "email-validator";
 
 const userAccountController = {
 
     logIn: async (req: Request, res: Response) => {
 
-        const credentials = req.body;
+        const data = req.body;
         const credentialSchema = Joi.object({
             username: Joi.string(),
             email: Joi.string(),
             password: Joi.string().required(),
             keepMeLoggedIn: Joi.boolean().required(),
         }).or("username", "email");
-        const { error } = credentialSchema.validate(credentials);
+        const { error } = credentialSchema.validate(data);
         if (error) {
             throw new Errors.JoiValidationError(error.message);
         };
+        if (data.email) {
+            const validEmail = validate(data.email);
+            if (!validEmail) {
+                throw new Errors.InvalidEmailFormatError();
+            };
+        };
 
-        const result = await userAccountService.logIn(credentials);
+        const result = await userAccountService.logIn(data);
         return res.status(200).json(result);
     },
 
@@ -47,6 +54,12 @@ const userAccountController = {
         const { error } = userSchema.validate(data);
         if (error) {
             throw new Errors.JoiValidationError(error.message);
+        };
+        if (data.email) {
+            const validEmail = validate(data.email);
+            if (!validEmail) {
+                throw new Errors.InvalidEmailFormatError();
+            };
         };
 
         const result = await userAccountService.signUp(data);
@@ -77,7 +90,7 @@ const userAccountController = {
 
     delete: async (req: Request, res: Response) => {
 
-        const id = req.params.userId;
+        const { id } = req.params;
         const validUserId = mongoose.Types.ObjectId.isValid(id);
         if (!validUserId) {
             throw new Errors.ObjectIdValidationError("user", id);
@@ -93,7 +106,13 @@ const userAccountController = {
         const { email } = req.body;
         if (!email) {
             throw new Errors.MissingEmailError();
+        } else {
+            const validEmail = validate(email);
+            if (!validEmail) {
+                throw new Errors.InvalidEmailFormatError();
+            };
         };
+        
 
         const result = await userAccountService.forgotPassword(email);
         return res.status(200).json(result);

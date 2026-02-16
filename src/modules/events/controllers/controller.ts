@@ -26,11 +26,17 @@ const eventController = {
         if (error) {
             throw new Errors.JoiValidationError(error.message);
         };
+        if (data.groupId) {
+            const validGroupId = mongoose.Types.ObjectId.isValid(data.groupId);
+            if (!validGroupId) {
+                throw new Errors.ObjectIdValidationError("group", data.groupId);
+            };
+        };
 
         const inputData: eventCreationInputData = {
             ...data,
             creatorId: user!.id,
-        }
+        };
 
         const result = await eventService.create(inputData);
         return res.status(201).json(result);

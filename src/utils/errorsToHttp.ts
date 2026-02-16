@@ -15,6 +15,13 @@ export const interpretErrorsHttp = (err: unknown) => {
         };
     };
 
+    if (err instanceof Errors.InvalidEmailFormatError) {
+        return {
+            status: 400,
+            body: { success: false, message: err.message }
+        };
+    };
+
     return {
         status: 500,
         body: { success: false, message: "Server error" }
