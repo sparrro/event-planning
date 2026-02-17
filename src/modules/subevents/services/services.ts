@@ -11,6 +11,11 @@ const subeventService = {
 
     add: async (input: subeventCreationInputData) => {
 
+        const eventExists = await eventRepo.find(input.eventId);
+        if (!eventExists) {
+            throw new Errors.EventNotFoundError(input.eventId);
+        };
+
         const userIsParticipantInEvent = await eventParticipationRepo.findUserInEvent(input.userId, input.eventId);
         if (!userIsParticipantInEvent) {
             throw new Errors.UserIsNotParticipantInEventError(input.eventId);
@@ -33,6 +38,10 @@ const subeventService = {
         if (!eventExists) {
             throw new Errors.EventNotFoundError(eventId);
         };
+        const userIsParticipantInEvent = await eventParticipationRepo.findUserInEvent(userId, eventId);
+        if (!userIsParticipantInEvent) {
+            throw new Errors.UserIsNotParticipantInEventError(eventId);
+        };
 
         const subevents = await subeventParticipationRepo.getSubeventByEventAndUser(userId, eventId);
         return { success: true, message: "Subevents retrieved", data: { subevents } };
@@ -53,7 +62,7 @@ const subeventService = {
         return { success: true, message: "Signed up succesfully", data: { participation } }
     },
 
-    delete: async (subeventId: mongoose.Types.ObjectId) => {
+    delete: async (subeventId: mongoose.Types.ObjectId) => { //kanske begränsa till den som skapat aktiviteten
 
         const subeventExists = await subeventRepo.findSubevent(subeventId);
         if (!subeventExists) {

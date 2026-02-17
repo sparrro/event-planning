@@ -2,8 +2,8 @@ make services throw errors - done
 make error classes - in progress
 trim error handling from controllers - done
 move errors from controllers to services where needed - done
-go through controllers and ensure all inputs are validated . done
-go through services and ensure all possible errors are thrown
+go through controllers and ensure all inputs are validated - done
+go through services and ensure all possible errors are thrown - in progress
 add necessary error to http conversions
 
 malformed input = 400 = controllers

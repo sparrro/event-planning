@@ -39,11 +39,11 @@ const groupService = {
     },
 
     leaveGroup: async (groupId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) => {
-        const checkGroup = await userGroupRepo.findGroup(groupId);
-        if (!checkGroup) {
+        const groupExists = await userGroupRepo.findGroup(groupId);
+        if (!groupExists) {
             throw new Errors.GroupNotFoundError(groupId);
         };
-        if (checkGroup.creator == userId) {
+        if (groupExists.creator == userId) {
             throw new Errors.UserIsFounderError(groupId);
         };
         const group = await userGroupRepo.removeUserFromGroup(groupId, userId);

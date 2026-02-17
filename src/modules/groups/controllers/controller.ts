@@ -52,7 +52,7 @@ const groupController = {
     },
 
     getGroupsByFounder: async (req: Request, res: Response) => {
-        const { user } = req;
+        const { user } = req; //kanske bättre att kunna hämta med godtyckligt id istället för bara ens eget
         const result = await groupService.getGroupsByFounder(user!.id);
         return res.status(200).json(result);
     },
